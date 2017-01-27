@@ -25,7 +25,7 @@ func main() {
 	packageName := "vending"
 	// fileName := "vending.go"
 	f := newFile(packageName)
-	addImport(f, "", "github.com/moo")
+	addImport(f, "", "\"github.com/moo\"")
 	addFunction(f, "validateCoin", []field{
 		field{
 			fieldName: "s",
@@ -35,6 +35,10 @@ func main() {
 			field{
 				fieldName: "",
 				typeName:  "int",
+			},
+			field{
+				fieldName: "",
+				typeName:  "bool",
 			},
 		})
 
@@ -51,6 +55,16 @@ func addFunction(f *ast.File, name string, params []field, results []field) {
 	newDecl := &ast.FuncDecl{
 		Name: newIdent(name),
 		Type: newFuncType(params, results),
+		Body: &ast.BlockStmt{
+			List: []ast.Stmt{
+				&ast.ReturnStmt{
+					Results: []ast.Expr{
+						newBasicLit("0"),
+						newBasicLit("false"),
+					},
+				},
+			},
+		},
 	}
 	f.Decls = append(f.Decls, newDecl)
 }
