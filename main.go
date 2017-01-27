@@ -9,6 +9,11 @@ import (
 	"os"
 )
 
+type field struct {
+	fieldName string
+	typeName  string
+}
+
 func main() {
 	fset := token.NewFileSet()
 	path := "C:\\Users\\Dave\\Documents\\Projects\\Go\\src\\github.com\\activelylazy\\generated-vending"
@@ -21,6 +26,17 @@ func main() {
 	// fileName := "vending.go"
 	f := newFile(packageName)
 	addImport(f, "", "github.com/moo")
+	addFunction(f, "validateCoin", []field{
+		field{
+			fieldName: "s",
+			typeName:  "string",
+		}},
+		[]field{
+			field{
+				fieldName: "",
+				typeName:  "int",
+			},
+		})
 
 	printer.Fprint(os.Stdout, fset, f)
 }
@@ -29,6 +45,21 @@ func newFile(packageName string) *ast.File {
 	f := &ast.File{}
 	f.Name = ast.NewIdent(packageName)
 	return f
+}
+
+func addFunction(f *ast.File, name string, params []field, results []field) {
+	newDecl := &ast.FuncDecl{
+		Name: newIdent(name),
+		Type: newFuncType(params, results),
+	}
+	f.Decls = append(f.Decls, newDecl)
+}
+
+func newFuncType(params []field, results []field) *ast.FuncType {
+	return &ast.FuncType{
+		Params:  newFieldList(params),
+		Results: newFieldList(results),
+	}
 }
 
 func addImport(f *ast.File, name string, path string) {
@@ -57,8 +88,27 @@ func newIdent(name string) *ast.Ident {
 	}
 }
 
+func newIdentList(name string) []*ast.Ident {
+	if name == "" {
+		return make([]*ast.Ident, 0)
+	}
+	return []*ast.Ident{newIdent(name)}
+}
+
 func newBasicLit(value string) *ast.BasicLit {
 	return &ast.BasicLit{
 		Value: value,
 	}
+}
+
+func newFieldList(fields []field) *ast.FieldList {
+	l := &ast.FieldList{}
+	l.List = make([]*ast.Field, len(fields))
+	for i, p := range fields {
+		l.List[i] = &ast.Field{
+			Names: newIdentList(p.fieldName),
+			Type:  newBasicLit(p.typeName),
+		}
+	}
+	return l
 }
