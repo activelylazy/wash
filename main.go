@@ -40,6 +40,14 @@ func main() {
 				fieldName: "",
 				typeName:  "bool",
 			},
+		},
+		[]ast.Stmt{
+			&ast.ReturnStmt{
+				Results: []ast.Expr{
+					newBasicLit("0"),
+					newBasicLit("false"),
+				},
+			},
 		})
 
 	printer.Fprint(os.Stdout, fset, f)
@@ -51,19 +59,12 @@ func newFile(packageName string) *ast.File {
 	return f
 }
 
-func addFunction(f *ast.File, name string, params []field, results []field) {
+func addFunction(f *ast.File, name string, params []field, results []field, statementList []ast.Stmt) {
 	newDecl := &ast.FuncDecl{
 		Name: newIdent(name),
 		Type: newFuncType(params, results),
 		Body: &ast.BlockStmt{
-			List: []ast.Stmt{
-				&ast.ReturnStmt{
-					Results: []ast.Expr{
-						newBasicLit("0"),
-						newBasicLit("false"),
-					},
-				},
-			},
+			List: statementList,
 		},
 	}
 	f.Decls = append(f.Decls, newDecl)
