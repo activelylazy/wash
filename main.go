@@ -19,11 +19,16 @@ func main() {
 
 	packageName := "vending"
 	// fileName := "vending.go"
-	f := &ast.File{}
-	f.Name = ast.NewIdent(packageName)
+	f := newFile(packageName)
 	addImport(f, "", "github.com/moo")
 
 	printer.Fprint(os.Stdout, fset, f)
+}
+
+func newFile(packageName string) *ast.File {
+	f := &ast.File{}
+	f.Name = ast.NewIdent(packageName)
+	return f
 }
 
 func addImport(f *ast.File, name string, path string) {
