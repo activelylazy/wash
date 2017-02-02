@@ -25,6 +25,7 @@ type DomainConcept struct {
 type WashFile struct {
 	targetFilename string
 	file           *ast.File
+	washer         *Washer
 }
 
 // FluentFileEdit is a fluent structure for editing files

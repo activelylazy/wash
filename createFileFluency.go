@@ -18,12 +18,14 @@ func (f FluentFileCreator) InPackage(packageName string) (*WashFile, error) {
 	log.Printf("Creating file %s in package %s", targetFilename, packageName)
 	file := newFile(packageName)
 	os.MkdirAll(path.Dir(targetFilename), 0700)
-	err := writeFile(targetFilename, f.washer.fset, file)
+	washFile := &WashFile{
+		targetFilename: targetFilename,
+		file:           file,
+		washer:         f.washer,
+	}
+	err := washFile.write()
 	if err != nil {
 		return nil, err
 	}
-	return &WashFile{
-		targetFilename: targetFilename,
-		file:           file,
-	}, nil
+	return washFile, nil
 }

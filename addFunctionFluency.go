@@ -87,5 +87,5 @@ func (e FluentAddFunctionWithReturn) Build() {
 		// 	},
 		// },
 		})
-	writeFile(e.file.targetFilename, e.washer.fset, e.file.file)
+	e.file.write()
 }

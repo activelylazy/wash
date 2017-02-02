@@ -1,18 +1,16 @@
 package wash
 
 import (
-	"go/ast"
 	"go/printer"
-	"go/token"
 	"os"
 )
 
-func writeFile(targetFilename string, fset *token.FileSet, file *ast.File) error {
-	outfile, err := os.Create(targetFilename)
+func (w *WashFile) write() error {
+	outfile, err := os.Create(w.targetFilename)
 	if err != nil {
 		return err
 	}
 	defer outfile.Close()
-	printer.Fprint(outfile, fset, file)
+	printer.Fprint(outfile, w.washer.fset, w.file)
 	return nil
 }
