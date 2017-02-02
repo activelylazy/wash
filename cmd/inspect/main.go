@@ -8,6 +8,7 @@ import (
 	"go/token"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 )
 
@@ -20,7 +21,7 @@ func main() {
 	}
 
 	packageName := "vending"
-	fileName := "vending.go"
+	fileName := "vending_test.go"
 	f := findFile(pkgs, packageName, fileName)
 
 	if f == nil {
@@ -31,9 +32,21 @@ func main() {
 		switch v := s.(type) {
 		default:
 			fmt.Printf("Read %T\n", v)
+		case *ast.GenDecl:
+			g := s.(*ast.GenDecl)
+			fmt.Printf("Gen decl of type %s\n", g.Tok)
+			if g.Tok == token.IMPORT {
+				for _, spec := range g.Specs {
+					is := spec.(*ast.ImportSpec)
+					fmt.Printf("..Import spec name=%s, path=%s\n", is.Name, is.Path.Value)
+				}
+			}
 		case *ast.FuncDecl:
 			f := s.(*ast.FuncDecl)
 			fmt.Printf("Read function %s\n", f.Name.Name)
+			for _, stmt := range f.Body.List {
+				fmt.Printf("..Statement: %s\n", reflect.TypeOf(stmt))
+			}
 		}
 	}
 
