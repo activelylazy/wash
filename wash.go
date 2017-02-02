@@ -22,7 +22,7 @@ type DomainConcept struct {
 }
 
 // WashFile represents a file managed by washer
-type WashFile struct {
+type File struct {
 	targetFilename string
 	file           *ast.File
 	washer         *Washer
@@ -31,7 +31,7 @@ type WashFile struct {
 // FluentFileEdit is a fluent structure for editing files
 type FluentFileEdit struct {
 	washer *Washer
-	file   *WashFile
+	file   *File
 }
 
 // NewWasher creates a new Washer
@@ -58,7 +58,7 @@ func (w *Washer) CreateFile(filename string) FluentFileCreator {
 }
 
 // Edit edits a file
-func (w *Washer) Edit(file *WashFile) FluentFileEdit {
+func (w *Washer) Edit(file *File) FluentFileEdit {
 	return FluentFileEdit{
 		file:   file,
 		washer: w,

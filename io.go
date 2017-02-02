@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func (w *WashFile) write() error {
+func (w *File) write() error {
 	outfile, err := os.Create(w.targetFilename)
 	if err != nil {
 		return err

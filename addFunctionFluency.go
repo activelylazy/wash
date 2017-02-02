@@ -8,14 +8,14 @@ import (
 // FluentAddFunction is a fluent structure for adding functions
 type FluentAddFunction struct {
 	washer       *Washer
-	file         *WashFile
+	file         *File
 	functionName string
 }
 
 // FluentAddFunctionParameter is a fluent structure for adding parameters to a new function
 type FluentAddFunctionParameter struct {
 	washer       *Washer
-	file         *WashFile
+	file         *File
 	functionName string
 	params       []field
 }
@@ -23,7 +23,7 @@ type FluentAddFunctionParameter struct {
 // FluentAddFunctionWithReturn is a fluent structure for defining return types of a new function
 type FluentAddFunctionWithReturn struct {
 	washer       *Washer
-	file         *WashFile
+	file         *File
 	functionName string
 	params       []field
 	returnFields []field
