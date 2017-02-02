@@ -3,11 +3,7 @@ package wash
 import (
 	"go/ast"
 	"go/parser"
-	"go/printer"
 	"go/token"
-	"log"
-	"os"
-	"path"
 )
 
 // Washer allows modification of Go code
@@ -15,12 +11,26 @@ type Washer struct {
 	pkgs     map[string]*ast.Package
 	fset     *token.FileSet
 	basePath string
+	concepts map[string]DomainConcept
 }
 
-// FluentFileCreator allows creation of a new file
-type FluentFileCreator struct {
-	filename string
-	washer   *Washer
+// DomainConcept represents a named, typed value in the system
+type DomainConcept struct {
+	name     string
+	typeName string
+	value    string
+}
+
+// WashFile represents a file managed by washer
+type WashFile struct {
+	targetFilename string
+	file           *ast.File
+}
+
+// FluentFileEdit is a fluent structure for editing files
+type FluentFileEdit struct {
+	washer *Washer
+	file   *WashFile
 }
 
 // NewWasher creates a new Washer
@@ -34,6 +44,7 @@ func NewWasher(basePath string) (*Washer, error) {
 		basePath: basePath,
 		pkgs:     pkgs,
 		fset:     fset,
+		concepts: make(map[string]DomainConcept),
 	}, nil
 }
 
@@ -45,23 +56,30 @@ func (w *Washer) CreateFile(filename string) FluentFileCreator {
 	}
 }
 
-// InPackage creates a new file in a given package
-func (f FluentFileCreator) InPackage(packageName string) error {
-	targetFilename := path.Join(f.washer.basePath, f.filename)
-	log.Printf("Creating file %s in package %s", targetFilename, packageName)
-	file := newFile(packageName)
-	os.MkdirAll(path.Dir(targetFilename), 0700)
-	outfile, err := os.Create(targetFilename)
-	if err != nil {
-		return err
+// Edit edits a file
+func (w *Washer) Edit(file *WashFile) FluentFileEdit {
+	return FluentFileEdit{
+		file:   file,
+		washer: w,
 	}
-	defer outfile.Close()
-	printer.Fprint(outfile, f.washer.fset, file)
-	return nil
 }
 
-func newFile(packageName string) *ast.File {
-	f := &ast.File{}
-	f.Name = ast.NewIdent(packageName)
-	return f
+// NewDomainConcept adds a new domain concept - a named, typed value
+func (w *Washer) NewDomainConcept(name string, typeName string, value string) DomainConcept {
+	c := DomainConcept{
+		name:     name,
+		typeName: typeName,
+		value:    value,
+	}
+	w.concepts[name] = c
+	return c
+}
+
+// AddFunction begins adding a function to a file
+func (e FluentFileEdit) AddFunction(name string) FluentAddFunction {
+	return FluentAddFunction{
+		washer:       e.washer,
+		file:         e.file,
+		functionName: name,
+	}
 }
