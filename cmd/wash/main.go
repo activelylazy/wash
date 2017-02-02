@@ -30,6 +30,7 @@ func main() {
 		AddFunction("validateCoin").
 		WithParameter("s", "string").
 		ReturningTypes("int", "bool").
+		ThatReturns("0, false").
 		Build()
 	//.
 	// WhichWhenGiven(invalidCoin).

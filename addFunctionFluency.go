@@ -29,6 +29,15 @@ type FluentAddFunctionWithReturn struct {
 	returnFields []field
 }
 
+type FluentFunctionBuilder struct {
+	washer       *Washer
+	file         *File
+	functionName string
+	params       []field
+	returnFields []field
+	returnValue  string
+}
+
 // WithParameter adds a parameter to the function
 func (e FluentAddFunction) WithParameter(name string, typeName string) FluentAddFunctionParameter {
 	params := []field{newField(name, typeName)}
@@ -55,19 +64,30 @@ func (e FluentAddFunctionParameter) ReturningTypes(typeNames ...string) FluentAd
 	}
 }
 
+// ThatReturns specifies the hard-coded return value for the new function
+func (e FluentAddFunctionWithReturn) ThatReturns(retVal string) FluentFunctionBuilder {
+	return FluentFunctionBuilder{
+		washer:       e.washer,
+		file:         e.file,
+		functionName: e.functionName,
+		params:       e.params,
+		returnFields: e.returnFields,
+		returnValue:  retVal,
+	}
+}
+
 // Build creates the new function and writes the updated file to disk
-func (e FluentAddFunctionWithReturn) Build() {
+func (e FluentFunctionBuilder) Build() {
 	log.Printf("Adding function %s to %s", e.functionName, e.file.targetFilename)
 	params := e.params
 	results := e.returnFields
 	addFunction(e.file.file, e.functionName, params, results,
 		[]ast.Stmt{
-		// &ast.ReturnStmt{
-		// 	Results: []ast.Expr{
-		// 		newBasicLit("0"),
-		// 		newBasicLit("false"),
-		// 	},
-		// },
+			&ast.ReturnStmt{
+				Results: []ast.Expr{
+					newBasicLit(e.returnValue),
+				},
+			},
 		})
 	e.file.write()
 }
