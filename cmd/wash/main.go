@@ -29,7 +29,7 @@ func main() {
 	washer.Edit(vendingFile).
 		AddFunction("validateCoin").
 		WithParameter("s", "string").
-		Returning("int", "bool").
+		ReturningTypes("int", "bool").
 		Build()
 	//.
 	// WhichWhenGiven(invalidCoin).

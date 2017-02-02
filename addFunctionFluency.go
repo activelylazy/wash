@@ -40,8 +40,8 @@ func (e FluentAddFunction) WithParameter(name string, typeName string) FluentAdd
 	}
 }
 
-// Returning declares the return type(s) of the new function
-func (e FluentAddFunctionParameter) Returning(typeNames ...string) FluentAddFunctionWithReturn {
+// ReturningTypes declares the return type(s) of the new function
+func (e FluentAddFunctionParameter) ReturningTypes(typeNames ...string) FluentAddFunctionWithReturn {
 	returnFields := make([]field, len(typeNames))
 	for i := 0; i < len(typeNames); i++ {
 		returnFields[i] = newField("", typeNames[i])
