@@ -19,7 +19,7 @@ func main() {
 		log.Fatalf("Error parsing: %v", err)
 	}
 
-	vendingFile, err := washer.CreateFile("vending/vending.go").InPackage("vending")
+	vendingFile, err := wash.NewCreateFileRequest("vending/vending.go", "vending").Create(washer)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}

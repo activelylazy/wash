@@ -49,14 +49,6 @@ func NewWasher(basePath string) (*Washer, error) {
 	}, nil
 }
 
-// CreateFile creates a new file with the given name
-func (w *Washer) CreateFile(filename string) FluentFileCreator {
-	return FluentFileCreator{
-		filename: filename,
-		washer:   w,
-	}
-}
-
 // Edit edits a file
 func (w *Washer) Edit(file *File) FluentFileEdit {
 	return FluentFileEdit{
