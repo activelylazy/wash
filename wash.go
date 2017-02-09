@@ -67,12 +67,3 @@ func (w *Washer) NewDomainConcept(name string, typeName string, value string) Do
 	w.concepts[name] = c
 	return c
 }
-
-// AddFunction begins adding a function to a file
-func (e FluentFileEdit) AddFunction(name string) FluentAddFunction {
-	return FluentAddFunction{
-		washer:       e.washer,
-		file:         e.file,
-		functionName: name,
-	}
-}

@@ -26,12 +26,12 @@ func main() {
 
 	// invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
 
-	washer.Edit(vendingFile).
-		AddFunction("validateCoin").
-		WithParameter("s", "string").
-		ReturningTypes("int", "bool").
-		ThatReturns("0, false").
-		Build()
+	wash.NewAddFunctionRequest(vendingFile, "validateCoin",
+		[]wash.Field{wash.NewField("s", "string")},
+		[]wash.Field{wash.NewField("", "int"), wash.NewField("", "bool")},
+		"0, false").
+		Add(washer)
+
 	//.
 	// WhichWhenGiven(invalidCoin).
 	// Returns(0, false)

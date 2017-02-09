@@ -5,7 +5,8 @@ import (
 	"go/token"
 )
 
-type field struct {
+// Field represents a field
+type Field struct {
 	fieldName string
 	typeName  string
 }
@@ -16,7 +17,7 @@ func newFile(packageName string) *ast.File {
 	return f
 }
 
-func addFunction(f *ast.File, name string, params []field, results []field, statementList []ast.Stmt) {
+func addFunction(f *ast.File, name string, params []Field, results []Field, statementList []ast.Stmt) {
 	newDecl := &ast.FuncDecl{
 		Name: newIdent(name),
 		Type: newFuncType(params, results),
@@ -27,7 +28,7 @@ func addFunction(f *ast.File, name string, params []field, results []field, stat
 	f.Decls = append(f.Decls, newDecl)
 }
 
-func newFuncType(params []field, results []field) *ast.FuncType {
+func newFuncType(params []Field, results []Field) *ast.FuncType {
 	return &ast.FuncType{
 		Params:  newFieldList(params),
 		Results: newFieldList(results),
@@ -73,7 +74,7 @@ func newBasicLit(value string) *ast.BasicLit {
 	}
 }
 
-func newFieldList(fields []field) *ast.FieldList {
+func newFieldList(fields []Field) *ast.FieldList {
 	l := &ast.FieldList{}
 	l.List = make([]*ast.Field, len(fields))
 	for i, p := range fields {
