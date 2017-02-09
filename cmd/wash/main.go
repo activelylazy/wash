@@ -26,4 +26,16 @@ func main() {
 		[]string{"0", "false"}).
 		Add(washer)
 
+	vendingTestFile, err := wash.NewCreateFileRequest("vending/vending_test.go", "vending").Create(washer)
+	if err != nil {
+		log.Fatalf("Error creating file: %v", err)
+	}
+
+	wash.NewAddImportRequest(vendingTestFile, "", "testing").Add(washer)
+
+	wash.NewAddFunctionRequest(vendingTestFile, "TestReturnsZeroFalseForInvalidCoin",
+		[]wash.Field{wash.NewField("t", "*testing.T")},
+		[]wash.Field{},
+		[]string{}).
+		Add(washer)
 }

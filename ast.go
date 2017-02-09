@@ -48,7 +48,7 @@ func addImport(f *ast.File, name string, path string) {
 func newImportSpec(name string, path string) *ast.ImportSpec {
 	return &ast.ImportSpec{
 		Name: newIdent(name),
-		Path: newBasicLit(path),
+		Path: newBasicLit("\"" + path + "\""),
 	}
 }
 

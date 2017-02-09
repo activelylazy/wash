@@ -30,8 +30,11 @@ func (r AddFunctionRequest) Add(washer *Washer) {
 	log.Printf("Adding function %s to %s", r.functionName, r.file.targetFilename)
 	params := r.params
 	results := r.returnFields
-	addFunction(r.file.file, r.functionName, params, results,
-		[]ast.Stmt{newReturnStmt(r.returnValues)})
+	statements := []ast.Stmt{}
+	if len(r.returnValues) > 0 {
+		statements = append(statements, newReturnStmt(r.returnValues))
+	}
+	addFunction(r.file.file, r.functionName, params, results, statements)
 	r.file.write()
 }
 
