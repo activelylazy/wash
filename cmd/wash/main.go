@@ -29,7 +29,7 @@ func main() {
 	wash.NewAddFunctionRequest(vendingFile, "validateCoin",
 		[]wash.Field{wash.NewField("s", "string")},
 		[]wash.Field{wash.NewField("", "int"), wash.NewField("", "bool")},
-		"0, false").
+		[]string{"0", "false"}).
 		Add(washer)
 
 	//.

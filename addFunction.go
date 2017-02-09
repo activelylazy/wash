@@ -11,17 +11,17 @@ type AddFunctionRequest struct {
 	functionName string
 	params       []Field
 	returnFields []Field
-	returnValue  string
+	returnValues []string
 }
 
 // NewAddFunctionRequest creates a new request to add a function
-func NewAddFunctionRequest(file *File, functionName string, params []Field, returnFields []Field, returnValue string) AddFunctionRequest {
+func NewAddFunctionRequest(file *File, functionName string, params []Field, returnFields []Field, returnValues []string) AddFunctionRequest {
 	return AddFunctionRequest{
 		file:         file,
 		functionName: functionName,
 		params:       params,
 		returnFields: returnFields,
-		returnValue:  returnValue,
+		returnValues: returnValues,
 	}
 }
 
@@ -31,14 +31,18 @@ func (r AddFunctionRequest) Add(washer *Washer) {
 	params := r.params
 	results := r.returnFields
 	addFunction(r.file.file, r.functionName, params, results,
-		[]ast.Stmt{
-			&ast.ReturnStmt{
-				Results: []ast.Expr{
-					newBasicLit(r.returnValue),
-				},
-			},
-		})
+		[]ast.Stmt{newReturnStmt(r.returnValues)})
 	r.file.write()
+}
+
+func newReturnStmt(returnValues []string) *ast.ReturnStmt {
+	results := []ast.Expr{}
+	for _, s := range returnValues {
+		results = append(results, newBasicLit(s))
+	}
+	return &ast.ReturnStmt{
+		Results: results,
+	}
 }
 
 // NewField creates a new field
