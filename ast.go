@@ -17,7 +17,7 @@ func newFile(packageName string) *ast.File {
 	return f
 }
 
-func addFunction(f *ast.File, name string, params []Field, results []Field, statementList []ast.Stmt) {
+func addFunction(f *ast.File, name string, params []Field, results []Field, statementList []ast.Stmt) *ast.FuncDecl {
 	newDecl := &ast.FuncDecl{
 		Name: newIdent(name),
 		Type: newFuncType(params, results),
@@ -26,6 +26,7 @@ func addFunction(f *ast.File, name string, params []Field, results []Field, stat
 		},
 	}
 	f.Decls = append(f.Decls, newDecl)
+	return newDecl
 }
 
 func newFuncType(params []Field, results []Field) *ast.FuncType {
@@ -48,7 +49,7 @@ func addImport(f *ast.File, name string, path string) {
 func newImportSpec(name string, path string) *ast.ImportSpec {
 	return &ast.ImportSpec{
 		Name: newIdent(name),
-		Path: newBasicLit("\"" + path + "\""),
+		Path: NewBasicLit("\"" + path + "\""),
 	}
 }
 
@@ -68,7 +69,7 @@ func newIdentList(name string) []*ast.Ident {
 	return []*ast.Ident{newIdent(name)}
 }
 
-func newBasicLit(value string) *ast.BasicLit {
+func NewBasicLit(value string) *ast.BasicLit {
 	return &ast.BasicLit{
 		Value: value,
 	}
@@ -80,7 +81,7 @@ func newFieldList(fields []Field) *ast.FieldList {
 	for i, p := range fields {
 		l.List[i] = &ast.Field{
 			Names: newIdentList(p.fieldName),
-			Type:  newBasicLit(p.typeName),
+			Type:  NewBasicLit(p.typeName),
 		}
 	}
 	return l

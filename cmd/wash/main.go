@@ -33,9 +33,11 @@ func main() {
 
 	wash.NewAddImportRequest(vendingTestFile, "", "testing").Add(washer)
 
-	wash.NewAddFunctionRequest(vendingTestFile, "TestReturnsZeroFalseForInvalidCoin",
+	fn := wash.NewAddFunctionRequest(vendingTestFile, "TestValidateCoinReturnsZeroFalseForInvalidCoin",
 		[]wash.Field{wash.NewField("t", "*testing.T")},
 		[]wash.Field{},
 		[]string{}).
 		Add(washer)
+
+	wash.NewAppendToFunctionBodyRequest(fn, wash.NewDefineAssignStmt([]string{"value", "ok"}, wash.NewCallExpr("validateCoin", wash.NewBasicLit("\"x\"")))).Add(washer)
 }

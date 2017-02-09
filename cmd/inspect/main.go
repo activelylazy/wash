@@ -45,12 +45,31 @@ func main() {
 			f := s.(*ast.FuncDecl)
 			fmt.Printf("Read function %s\n", f.Name.Name)
 			for _, stmt := range f.Body.List {
-				fmt.Printf("..Statement: %s\n", reflect.TypeOf(stmt))
+				dumpStmt("  ", stmt)
 			}
 		}
 	}
 
 	printer.Fprint(os.Stdout, fset, f)
+}
+
+func dumpStmt(indent string, stmt ast.Stmt) {
+	switch v := stmt.(type) {
+	default:
+		fmt.Printf(indent+"Statement: %T\n", v)
+	case *ast.AssignStmt:
+		a := stmt.(*ast.AssignStmt)
+		fmt.Printf(indent + "AssignStmt, from:\n")
+		dumpExprList(indent+"  ", a.Lhs)
+		fmt.Printf(indent + "..to:\n")
+		dumpExprList(indent+"  ", a.Rhs)
+	}
+}
+
+func dumpExprList(indent string, exprList []ast.Expr) {
+	for _, e := range exprList {
+		fmt.Printf(indent+"Expression: %s\n", reflect.TypeOf(e))
+	}
 }
 
 func findFile(pkgs map[string]*ast.Package, packageName string, fileName string) *ast.File {
