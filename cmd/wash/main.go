@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("Error parsing: %v", err)
 	}
 
-	vendingFile, err := operations.NewCreateFileRequest("vending/vending.go", "vending").Create(washer)
+	vendingFile, err := operations.NewCreateFileRequest("vending/vending.go", "vending").Apply(washer)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
@@ -38,7 +38,7 @@ func main() {
 		Apply(washer)
 
 	vendingTestFile, err := operations.NewCreateFileRequest("vending/vending_test.go", "vending").
-		Create(washer)
+		Apply(washer)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}

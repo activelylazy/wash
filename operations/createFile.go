@@ -24,7 +24,7 @@ func NewCreateFileRequest(filename string, packageName string) CreateFileRequest
 }
 
 // Create creates a file
-func (r CreateFileRequest) Create(washer *wash.Washer) (*wash.File, error) {
+func (r CreateFileRequest) Apply(washer *wash.Washer) (*wash.File, error) {
 	targetFilename := path.Join(washer.BasePath, r.filename)
 	log.Printf("Creating file %s in package %s", targetFilename, r.packageName)
 	file := newFile(r.packageName)
