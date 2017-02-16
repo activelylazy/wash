@@ -2,7 +2,6 @@ package operations
 
 import (
 	"go/ast"
-	"go/token"
 	"log"
 
 	"github.com/activelylazy/wash"
@@ -86,19 +85,6 @@ func newReturnStmt(returnValues []string) *ast.ReturnStmt {
 	}
 	return &ast.ReturnStmt{
 		Results: results,
-	}
-}
-
-// NewDefineAssignStmt creates a new assign statement defining at least one new variable :=
-func NewDefineAssignStmt(targetVarNames []string, rhs ...ast.Expr) *ast.AssignStmt {
-	lhs := []ast.Expr{}
-	for _, s := range targetVarNames {
-		lhs = append(lhs, syntax.NewIdent(s))
-	}
-	return &ast.AssignStmt{
-		Lhs: lhs,
-		Tok: token.DEFINE,
-		Rhs: rhs,
 	}
 }
 

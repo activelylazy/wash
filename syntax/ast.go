@@ -1,6 +1,9 @@
 package syntax
 
-import "go/ast"
+import (
+	"go/ast"
+	"go/token"
+)
 
 // Field represents a field
 type Field struct {
@@ -50,4 +53,17 @@ func NewFieldList(fields []Field) *ast.FieldList {
 		}
 	}
 	return l
+}
+
+// NewDefineAssignStmt creates a new assign statement defining at least one new variable :=
+func NewDefineAssignStmt(targetVarNames []string, rhs ...ast.Expr) *ast.AssignStmt {
+	lhs := []ast.Expr{}
+	for _, s := range targetVarNames {
+		lhs = append(lhs, NewIdent(s))
+	}
+	return &ast.AssignStmt{
+		Lhs: lhs,
+		Tok: token.DEFINE,
+		Rhs: rhs,
+	}
 }
