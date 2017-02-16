@@ -88,14 +88,6 @@ func newReturnStmt(returnValues []string) *ast.ReturnStmt {
 	}
 }
 
-// NewCallExpr creates a new function call expression
-func NewCallExpr(functionName string, args ...ast.Expr) *ast.CallExpr {
-	return &ast.CallExpr{
-		Fun:  syntax.NewIdent(functionName),
-		Args: args,
-	}
-}
-
 // NewAppendToFunctionBodyRequest creates a new request to append to a function body
 func NewAppendToFunctionBodyRequest(fn Function, stmt ast.Stmt) AppendToFunctionBodyRequest {
 	return AppendToFunctionBodyRequest{

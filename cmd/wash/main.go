@@ -51,6 +51,6 @@ func main() {
 		[]string{}).
 		Apply(washer)
 
-	operations.NewAppendToFunctionBodyRequest(fn, syntax.NewDefineAssignStmt([]string{"value", "ok"}, operations.NewCallExpr("validateCoin", syntax.NewBasicLit("\"x\"")))).
+	operations.NewAppendToFunctionBodyRequest(fn, syntax.NewDefineAssignStmt([]string{"value", "ok"}, syntax.NewCallExpr("validateCoin", syntax.NewBasicLit("\"x\"")))).
 		Apply(washer)
 }

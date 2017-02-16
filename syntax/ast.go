@@ -67,3 +67,11 @@ func NewDefineAssignStmt(targetVarNames []string, rhs ...ast.Expr) *ast.AssignSt
 		Rhs: rhs,
 	}
 }
+
+// NewCallExpr creates a new function call expression
+func NewCallExpr(functionName string, args ...ast.Expr) *ast.CallExpr {
+	return &ast.CallExpr{
+		Fun:  NewIdent(functionName),
+		Args: args,
+	}
+}
