@@ -3,14 +3,16 @@ package wash
 import (
 	"go/ast"
 	"go/parser"
+	"go/printer"
 	"go/token"
+	"os"
 )
 
 // Washer allows modification of Go code
 type Washer struct {
 	pkgs     map[string]*ast.Package
-	fset     *token.FileSet
-	basePath string
+	Fset     *token.FileSet
+	BasePath string
 	concepts map[string]DomainConcept
 }
 
@@ -21,17 +23,20 @@ type DomainConcept struct {
 	value    string
 }
 
-// WashFile represents a file managed by washer
+// File represents a file managed by washer
 type File struct {
-	targetFilename string
-	file           *ast.File
+	TargetFilename string
+	File           *ast.File
 	washer         *Washer
 }
 
-// FluentFileEdit is a fluent structure for editing files
-type FluentFileEdit struct {
-	washer *Washer
-	file   *File
+// NewFile creates a new wash file
+func NewFile(targetFilename string, file *ast.File, washer *Washer) *File {
+	return &File{
+		TargetFilename: targetFilename,
+		File:           file,
+		washer:         washer,
+	}
 }
 
 // NewWasher creates a new Washer
@@ -42,19 +47,21 @@ func NewWasher(basePath string) (*Washer, error) {
 		return nil, err
 	}
 	return &Washer{
-		basePath: basePath,
+		BasePath: basePath,
 		pkgs:     pkgs,
-		fset:     fset,
+		Fset:     fset,
 		concepts: make(map[string]DomainConcept),
 	}, nil
 }
 
-// Edit edits a file
-func (w *Washer) Edit(file *File) FluentFileEdit {
-	return FluentFileEdit{
-		file:   file,
-		washer: w,
+func (w *File) Write() error {
+	outfile, err := os.Create(w.TargetFilename)
+	if err != nil {
+		return err
 	}
+	defer outfile.Close()
+	printer.Fprint(outfile, w.washer.Fset, w.File)
+	return nil
 }
 
 // NewDomainConcept adds a new domain concept - a named, typed value

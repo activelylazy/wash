@@ -1,9 +1,12 @@
-package wash
+package operations
 
 import (
+	"go/ast"
 	"log"
 	"os"
 	"path"
+
+	"github.com/activelylazy/wash"
 )
 
 // CreateFileRequest allows creation of a new file
@@ -21,18 +24,20 @@ func NewCreateFileRequest(filename string, packageName string) CreateFileRequest
 }
 
 // Create creates a file
-func (r CreateFileRequest) Create(washer *Washer) (*File, error) {
-	targetFilename := path.Join(washer.basePath, r.filename)
+func (r CreateFileRequest) Create(washer *wash.Washer) (*wash.File, error) {
+	targetFilename := path.Join(washer.BasePath, r.filename)
 	log.Printf("Creating file %s in package %s", targetFilename, r.packageName)
 	file := newFile(r.packageName)
 	os.MkdirAll(path.Dir(targetFilename), 0700)
-	washFile := &File{
-		targetFilename: targetFilename,
-		file:           file,
-		washer:         washer,
-	}
-	if err := washFile.write(); err != nil {
+	washFile := wash.NewFile(targetFilename, file, washer)
+	if err := washFile.Write(); err != nil {
 		return nil, err
 	}
 	return washFile, nil
+}
+
+func newFile(packageName string) *ast.File {
+	f := &ast.File{}
+	f.Name = ast.NewIdent(packageName)
+	return f
 }

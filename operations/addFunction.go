@@ -1,17 +1,20 @@
-package wash
+package operations
 
 import (
 	"go/ast"
 	"go/token"
 	"log"
+
+	"github.com/activelylazy/wash"
+	"github.com/activelylazy/wash/syntax"
 )
 
 // AddFunctionRequest represents a request to add a new function to a file
 type AddFunctionRequest struct {
-	file         *File
+	file         *wash.File
 	functionName string
-	params       []Field
-	returnFields []Field
+	params       []syntax.Field
+	returnFields []syntax.Field
 	returnValues []string
 }
 
@@ -23,13 +26,13 @@ type AppendToFunctionBodyRequest struct {
 
 // Function represents a function managed by wash
 type Function struct {
-	file         *File
+	file         *wash.File
 	functionName string
 	decl         *ast.FuncDecl
 }
 
 // NewAddFunctionRequest creates a new request to add a function
-func NewAddFunctionRequest(file *File, functionName string, params []Field, returnFields []Field, returnValues []string) AddFunctionRequest {
+func NewAddFunctionRequest(file *wash.File, functionName string, params []syntax.Field, returnFields []syntax.Field, returnValues []string) AddFunctionRequest {
 	return AddFunctionRequest{
 		file:         file,
 		functionName: functionName,
@@ -39,17 +42,17 @@ func NewAddFunctionRequest(file *File, functionName string, params []Field, retu
 	}
 }
 
-// Add adds a new function to a file
-func (r AddFunctionRequest) Add(washer *Washer) Function {
-	log.Printf("Adding function %s to %s", r.functionName, r.file.targetFilename)
+// Apply adds a new function to a file
+func (r AddFunctionRequest) Apply(washer *wash.Washer) Function {
+	log.Printf("Adding function %s to %s", r.functionName, r.file.TargetFilename)
 	params := r.params
 	results := r.returnFields
 	statements := []ast.Stmt{}
 	if len(r.returnValues) > 0 {
 		statements = append(statements, newReturnStmt(r.returnValues))
 	}
-	decl := addFunction(r.file.file, r.functionName, params, results, statements)
-	r.file.write()
+	decl := addFunction(r.file.File, r.functionName, params, results, statements)
+	r.file.Write()
 	return Function{
 		file:         r.file,
 		functionName: r.functionName,
@@ -57,21 +60,32 @@ func (r AddFunctionRequest) Add(washer *Washer) Function {
 	}
 }
 
-func newReturnStmt(returnValues []string) *ast.ReturnStmt {
-	results := []ast.Expr{}
-	for _, s := range returnValues {
-		results = append(results, NewBasicLit(s))
+func addFunction(f *ast.File, name string, params []syntax.Field, results []syntax.Field, statementList []ast.Stmt) *ast.FuncDecl {
+	newDecl := &ast.FuncDecl{
+		Name: syntax.NewIdent(name),
+		Type: newFuncType(params, results),
+		Body: &ast.BlockStmt{
+			List: statementList,
+		},
 	}
-	return &ast.ReturnStmt{
-		Results: results,
+	f.Decls = append(f.Decls, newDecl)
+	return newDecl
+}
+
+func newFuncType(params []syntax.Field, results []syntax.Field) *ast.FuncType {
+	return &ast.FuncType{
+		Params:  syntax.NewFieldList(params),
+		Results: syntax.NewFieldList(results),
 	}
 }
 
-// NewField creates a new field
-func NewField(name string, typeName string) Field {
-	return Field{
-		fieldName: name,
-		typeName:  typeName,
+func newReturnStmt(returnValues []string) *ast.ReturnStmt {
+	results := []ast.Expr{}
+	for _, s := range returnValues {
+		results = append(results, syntax.NewBasicLit(s))
+	}
+	return &ast.ReturnStmt{
+		Results: results,
 	}
 }
 
@@ -79,7 +93,7 @@ func NewField(name string, typeName string) Field {
 func NewDefineAssignStmt(targetVarNames []string, rhs ...ast.Expr) *ast.AssignStmt {
 	lhs := []ast.Expr{}
 	for _, s := range targetVarNames {
-		lhs = append(lhs, newIdent(s))
+		lhs = append(lhs, syntax.NewIdent(s))
 	}
 	return &ast.AssignStmt{
 		Lhs: lhs,
@@ -91,7 +105,7 @@ func NewDefineAssignStmt(targetVarNames []string, rhs ...ast.Expr) *ast.AssignSt
 // NewCallExpr creates a new function call expression
 func NewCallExpr(functionName string, args ...ast.Expr) *ast.CallExpr {
 	return &ast.CallExpr{
-		Fun:  newIdent(functionName),
+		Fun:  syntax.NewIdent(functionName),
 		Args: args,
 	}
 }
@@ -104,8 +118,8 @@ func NewAppendToFunctionBodyRequest(fn Function, stmt ast.Stmt) AppendToFunction
 	}
 }
 
-// Add adds the statement to the function body
-func (r AppendToFunctionBodyRequest) Add(washer *Washer) {
+// Apply adds the statement to the function body
+func (r AppendToFunctionBodyRequest) Apply(washer *wash.Washer) {
 	r.fn.decl.Body.List = append(r.fn.decl.Body.List, r.stmt)
-	r.fn.file.write()
+	r.fn.file.Write()
 }

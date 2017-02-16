@@ -5,6 +5,8 @@ import (
 	"log"
 
 	"github.com/activelylazy/wash"
+	"github.com/activelylazy/wash/operations"
+	"github.com/activelylazy/wash/syntax"
 )
 
 func main() {
@@ -22,31 +24,33 @@ func main() {
 		log.Fatalf("Error parsing: %v", err)
 	}
 
-	vendingFile, err := wash.NewCreateFileRequest("vending/vending.go", "vending").Create(washer)
+	vendingFile, err := operations.NewCreateFileRequest("vending/vending.go", "vending").Create(washer)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
 	// invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
 
-	wash.NewAddFunctionRequest(vendingFile, "validateCoin",
-		[]wash.Field{wash.NewField("s", "string")},
-		[]wash.Field{wash.NewField("", "int"), wash.NewField("", "bool")},
+	operations.NewAddFunctionRequest(vendingFile, "validateCoin",
+		[]syntax.Field{syntax.NewField("s", "string")},
+		[]syntax.Field{syntax.NewField("", "int"), syntax.NewField("", "bool")},
 		[]string{"0", "false"}).
-		Add(washer)
+		Apply(washer)
 
-	vendingTestFile, err := wash.NewCreateFileRequest("vending/vending_test.go", "vending").Create(washer)
+	vendingTestFile, err := operations.NewCreateFileRequest("vending/vending_test.go", "vending").
+		Create(washer)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	wash.NewAddImportRequest(vendingTestFile, "", "testing").Add(washer)
+	operations.NewAddImportRequest(vendingTestFile, "", "testing").Apply(washer)
 
-	fn := wash.NewAddFunctionRequest(vendingTestFile, "TestValidateCoinReturnsZeroFalseForInvalidCoin",
-		[]wash.Field{wash.NewField("t", "*testing.T")},
-		[]wash.Field{},
+	fn := operations.NewAddFunctionRequest(vendingTestFile, "TestValidateCoinReturnsZeroFalseForInvalidCoin",
+		[]syntax.Field{syntax.NewField("t", "*testing.T")},
+		[]syntax.Field{},
 		[]string{}).
-		Add(washer)
+		Apply(washer)
 
-	wash.NewAppendToFunctionBodyRequest(fn, wash.NewDefineAssignStmt([]string{"value", "ok"}, wash.NewCallExpr("validateCoin", wash.NewBasicLit("\"x\"")))).Add(washer)
+	operations.NewAppendToFunctionBodyRequest(fn, operations.NewDefineAssignStmt([]string{"value", "ok"}, operations.NewCallExpr("validateCoin", syntax.NewBasicLit("\"x\"")))).
+		Apply(washer)
 }
