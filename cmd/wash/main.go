@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/activelylazy/wash"
@@ -8,7 +9,15 @@ import (
 
 func main() {
 
-	washer, err := wash.NewWasher("C:\\Users\\Dave\\Documents\\Projects\\Go\\src\\github.com\\activelylazy\\generated-vending")
+	basePath := flag.String("base", "", "the base path to read/write source code")
+
+	flag.Parse()
+
+	if *basePath == "" {
+		log.Fatalf("Base path is required")
+	}
+
+	washer, err := wash.NewWasher(*basePath)
 	if err != nil {
 		log.Fatalf("Error parsing: %v", err)
 	}
