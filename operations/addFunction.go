@@ -17,12 +17,6 @@ type AddFunctionRequest struct {
 	returnValues []string
 }
 
-// AppendToFunctionBodyRequest represents a request to append to a function body's statement list
-type AppendToFunctionBodyRequest struct {
-	fn   Function
-	stmt ast.Stmt
-}
-
 // Function represents a function managed by wash
 type Function struct {
 	file         *wash.File

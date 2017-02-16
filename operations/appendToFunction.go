@@ -6,6 +6,12 @@ import (
 	"github.com/activelylazy/wash"
 )
 
+// AppendToFunctionBodyRequest represents a request to append to a function body's statement list
+type AppendToFunctionBodyRequest struct {
+	fn   Function
+	stmt ast.Stmt
+}
+
 // NewAppendToFunctionBodyRequest creates a new request to append to a function body
 func NewAppendToFunctionBodyRequest(fn Function, stmt ast.Stmt) AppendToFunctionBodyRequest {
 	return AppendToFunctionBodyRequest{
