@@ -23,13 +23,6 @@ type DomainConcept struct {
 	value    string
 }
 
-// File represents a file managed by washer
-type File struct {
-	TargetFilename string
-	File           *ast.File
-	washer         *Washer
-}
-
 // NewFile creates a new wash file
 func NewFile(targetFilename string, file *ast.File, washer *Washer) *File {
 	return &File{

@@ -43,7 +43,7 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	operations.NewAddImportRequest(vendingTestFile, "", "testing").Apply(washer)
+	vendingTestFile.AddImport("", "testing")
 
 	fn := operations.NewAddFunctionRequest(vendingTestFile, "TestValidateCoinReturnsZeroFalseForInvalidCoin",
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
