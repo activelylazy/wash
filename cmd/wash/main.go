@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/activelylazy/wash"
-	"github.com/activelylazy/wash/operations"
 	"github.com/activelylazy/wash/syntax"
 )
 
@@ -24,7 +23,7 @@ func main() {
 		log.Fatalf("Error parsing: %v", err)
 	}
 
-	vendingFile, err := operations.NewCreateFileRequest("vending/vending.go", "vending").Apply(washer)
+	vendingFile, err := washer.CreateFile("vending/vending.go", "vending")
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
@@ -36,8 +35,7 @@ func main() {
 		[]syntax.Field{syntax.NewField("", "int"), syntax.NewField("", "bool")},
 		[]string{"0", "false"})
 
-	vendingTestFile, err := operations.NewCreateFileRequest("vending/vending_test.go", "vending").
-		Apply(washer)
+	vendingTestFile, err := washer.CreateFile("vending/vending_test.go", "vending")
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}

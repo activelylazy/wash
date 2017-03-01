@@ -5,7 +5,9 @@ import (
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"log"
 	"os"
+	"path"
 )
 
 // Washer allows modification of Go code
@@ -47,6 +49,25 @@ func NewWasher(basePath string) (*Washer, error) {
 	}, nil
 }
 
+// CreateFile creates a new go file
+func (washer *Washer) CreateFile(filename string, packageName string) (*File, error) {
+	targetFilename := path.Join(washer.BasePath, filename)
+	log.Printf("Creating file %s in package %s", targetFilename, packageName)
+	file := newFile(packageName)
+	os.MkdirAll(path.Dir(targetFilename), 0700)
+	washFile := NewFile(targetFilename, file, washer)
+	if err := washFile.Write(); err != nil {
+		return nil, err
+	}
+	return washFile, nil
+}
+
+func newFile(packageName string) *ast.File {
+	f := &ast.File{}
+	f.Name = ast.NewIdent(packageName)
+	return f
+}
+
 func (w *File) Write() error {
 	outfile, err := os.Create(w.TargetFilename)
 	if err != nil {
@@ -58,12 +79,12 @@ func (w *File) Write() error {
 }
 
 // NewDomainConcept adds a new domain concept - a named, typed value
-func (w *Washer) NewDomainConcept(name string, typeName string, value string) DomainConcept {
+func (washer *Washer) NewDomainConcept(name string, typeName string, value string) DomainConcept {
 	c := DomainConcept{
 		name:     name,
 		typeName: typeName,
 		value:    value,
 	}
-	w.concepts[name] = c
+	washer.concepts[name] = c
 	return c
 }
