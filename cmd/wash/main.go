@@ -51,7 +51,7 @@ func main() {
 		[]string{}).
 		Apply(washer)
 
-	stmt, err := wash.ParseStatement("value, ok := validateCoin(\"x\")")
+	stmt, err := wash.ParseStatement(`value, ok := validateCoin("x")`)
 	if err != nil {
 		log.Fatalf("Error parsing statement: %v", err)
 	}
