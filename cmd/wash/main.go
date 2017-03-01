@@ -51,6 +51,11 @@ func main() {
 		[]string{}).
 		Apply(washer)
 
-	operations.NewAppendToFunctionBodyRequest(fn, syntax.NewDefineAssignStmt([]string{"value", "ok"}, syntax.NewCallExpr("validateCoin", syntax.NewBasicLit("\"x\"")))).
-		Apply(washer)
+	stmt, err := wash.ParseStatement("value, ok := validateCoin(\"x\")")
+	if err != nil {
+		log.Fatalf("Error parsing statement: %v", err)
+	}
+
+	operations.NewAppendToFunctionBodyRequest(fn, stmt).Apply(washer)
+
 }
