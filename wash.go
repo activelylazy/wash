@@ -32,6 +32,13 @@ func NewFile(targetFilename string, file *ast.File, washer *Washer) *File {
 	}
 }
 
+// Function represents a function managed by wash
+type Function struct {
+	File         File
+	functionName string
+	Decl         *ast.FuncDecl
+}
+
 // NewWasher creates a new Washer
 func NewWasher(basePath string) (*Washer, error) {
 	fset := token.NewFileSet()

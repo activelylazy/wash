@@ -31,11 +31,10 @@ func main() {
 
 	// invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
 
-	operations.NewAddFunctionRequest(vendingFile, "validateCoin",
+	vendingFile.AddFunction("validateCoin",
 		[]syntax.Field{syntax.NewField("s", "string")},
 		[]syntax.Field{syntax.NewField("", "int"), syntax.NewField("", "bool")},
-		[]string{"0", "false"}).
-		Apply(washer)
+		[]string{"0", "false"})
 
 	vendingTestFile, err := operations.NewCreateFileRequest("vending/vending_test.go", "vending").
 		Apply(washer)
@@ -45,11 +44,10 @@ func main() {
 
 	vendingTestFile.AddImport("", "testing")
 
-	fn := operations.NewAddFunctionRequest(vendingTestFile, "TestValidateCoinReturnsZeroFalseForInvalidCoin",
+	fn := vendingTestFile.AddFunction("TestValidateCoinReturnsZeroFalseForInvalidCoin",
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
 		[]syntax.Field{},
-		[]string{}).
-		Apply(washer)
+		[]string{})
 
 	stmt, err := wash.ParseStatement(`value, ok := validateCoin("x")`)
 	if err != nil {
