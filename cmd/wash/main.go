@@ -55,7 +55,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error parsing statement: %v", err)
 	}
-
 	operations.NewAppendToFunctionBodyRequest(fn, stmt).Apply(washer)
 
+	stmt, err = wash.ParseStatement(`if value != 0 {
+		t.Errorf("Expected 0 but got %d", value)
+	}`)
+	if err != nil {
+		log.Fatalf("Error parsing statement: %v", err)
+	}
+	operations.NewAppendToFunctionBodyRequest(fn, stmt).Apply(washer)
+
+	stmt, err = wash.ParseStatement(`if ok {
+		t.Errorf("Expected ok to be false but got %v", ok)
+	}`)
+	if err != nil {
+		log.Fatalf("Error parsing statement: %v", err)
+	}
+	operations.NewAppendToFunctionBodyRequest(fn, stmt).Apply(washer)
 }
