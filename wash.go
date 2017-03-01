@@ -25,15 +25,6 @@ type DomainConcept struct {
 	value    string
 }
 
-// NewFile creates a new wash file
-func NewFile(targetFilename string, file *ast.File, washer *Washer) *File {
-	return &File{
-		TargetFilename: targetFilename,
-		File:           file,
-		washer:         washer,
-	}
-}
-
 // NewWasher creates a new Washer
 func NewWasher(basePath string) (*Washer, error) {
 	fset := token.NewFileSet()
@@ -55,11 +46,19 @@ func (washer *Washer) CreateFile(filename string, packageName string) (*File, er
 	log.Printf("Creating file %s in package %s", targetFilename, packageName)
 	file := newFile(packageName)
 	os.MkdirAll(path.Dir(targetFilename), 0700)
-	washFile := NewFile(targetFilename, file, washer)
+	washFile := newWashFile(targetFilename, file, washer)
 	if err := washFile.Write(); err != nil {
 		return nil, err
 	}
 	return washFile, nil
+}
+
+func newWashFile(targetFilename string, file *ast.File, washer *Washer) *File {
+	return &File{
+		TargetFilename: targetFilename,
+		File:           file,
+		washer:         washer,
+	}
 }
 
 func newFile(packageName string) *ast.File {
