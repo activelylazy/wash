@@ -28,6 +28,15 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
+	displayFile, err := washer.CreateFile("vending/display.go", "display")
+	if err != nil {
+		log.Fatalf("Error creating file: %v", err)
+	}
+
+	displayFile.AddStruct(displayFile,
+		"Display",
+		[]syntax.Field{syntax.NewField("message", "string")})
+
 	// invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
 
 	vendingFile.AddFunction("validateCoin",
