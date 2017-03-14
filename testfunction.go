@@ -20,8 +20,8 @@ func AppendTestFunctionCall(fn Function, calledFunction Function, expectedValues
 
 	for i, varName := range returnValueNames {
 		fn.Append(fmt.Sprintf(`if %v {
-            t.Errorf("Expected %v but got %%v", %s)
-        }`, defineComparison(varName, expectedValues[i]), expectedValues[i], varName))
+            t.Errorf("Expected %s to be %v but was %%v", %s)
+        }`, defineComparison(varName, expectedValues[i]), varName, expectedValues[i], varName))
 	}
 
 	return nil
