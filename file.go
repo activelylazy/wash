@@ -17,6 +17,12 @@ type File struct {
 
 // AddImport adds a new import to this file
 func (f File) AddImport(name string, path string) {
+	existing := existingImportSpecs(f.File)
+	for _, s := range existing {
+		if nilSafeToString(s.Name) == name && s.Path.Value == "\""+path+"\"" {
+			return
+		}
+	}
 	addImport(f.File, name, path)
 }
 
@@ -58,6 +64,27 @@ func addImport(f *ast.File, name string, path string) {
 		},
 	}
 	f.Decls = append([]ast.Decl{newDecl}, f.Decls...)
+}
+
+func existingImportSpecs(f *ast.File) []*ast.ImportSpec {
+	specs := make([]*ast.ImportSpec, 0)
+	for _, d := range f.Decls {
+		switch d.(type) {
+		case *ast.GenDecl:
+			g := d.(*ast.GenDecl)
+			if g.Tok == token.IMPORT {
+				for _, s := range g.Specs {
+					switch s.(type) {
+					case *ast.ImportSpec:
+						i := s.(*ast.ImportSpec)
+						specs = append(specs, i)
+					}
+				}
+			}
+		}
+	}
+
+	return specs
 }
 
 func newImportSpec(name string, path string) *ast.ImportSpec {
@@ -118,4 +145,11 @@ func newReturnStmt(returnValues []string) *ast.ReturnStmt {
 	return &ast.ReturnStmt{
 		Results: results,
 	}
+}
+
+func nilSafeToString(i *ast.Ident) string {
+	if i == nil {
+		return ""
+	}
+	return i.String()
 }

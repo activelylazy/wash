@@ -10,6 +10,8 @@ import (
 
 // WriteFunctionCallTest appends a test to a file which verifies a call to a function
 func WriteFunctionCallTest(testFile *File, calledFunction Function, expectedValues []string) error {
+	testFile.AddImport("", "testing")
+
 	fn := testFile.AddFunction("TestValidateCoinReturnsZeroFalseForInvalidCoin",
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
 		[]syntax.Field{},

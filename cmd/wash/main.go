@@ -49,8 +49,6 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	vendingTestFile.AddImport("", "testing")
-
 	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []string{"0", "false"}); err != nil {
 		log.Fatalf("Error: %v", err)
 	}
