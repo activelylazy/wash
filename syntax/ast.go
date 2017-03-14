@@ -7,8 +7,8 @@ import (
 
 // Field represents a field
 type Field struct {
-	fieldName string
-	typeName  string
+	FieldName string
+	TypeName  string
 }
 
 func NewIdent(name string) *ast.Ident {
@@ -37,8 +37,8 @@ func NewBasicLit(value string) *ast.BasicLit {
 // NewField creates a new field
 func NewField(name string, typeName string) Field {
 	return Field{
-		fieldName: name,
-		typeName:  typeName,
+		FieldName: name,
+		TypeName:  typeName,
 	}
 }
 
@@ -48,8 +48,8 @@ func NewFieldList(fields []Field) *ast.FieldList {
 	l.List = make([]*ast.Field, len(fields))
 	for i, p := range fields {
 		l.List[i] = &ast.Field{
-			Names: newIdentList(p.fieldName),
-			Type:  NewBasicLit(p.typeName),
+			Names: newIdentList(p.FieldName),
+			Type:  NewBasicLit(p.TypeName),
 		}
 	}
 	return l

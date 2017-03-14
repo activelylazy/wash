@@ -31,8 +31,10 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnFiel
 	f.Write()
 	return Function{
 		File:         f,
-		functionName: functionName,
+		FunctionName: functionName,
 		Decl:         decl,
+		Params:       params,
+		ReturnValues: returnFields,
 	}
 }
 

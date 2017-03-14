@@ -28,20 +28,20 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	displayFile, err := washer.CreateFile("vending/display.go", "display")
-	if err != nil {
-		log.Fatalf("Error creating file: %v", err)
-	}
+	// displayFile, err := washer.CreateFile("vending/display.go", "vending")
+	// if err != nil {
+	// 	log.Fatalf("Error creating file: %v", err)
+	// }
 
-	displayFile.AddStruct(displayFile,
-		"Display",
-		[]syntax.Field{syntax.NewField("message", "string")})
+	// displayFile.AddStruct(displayFile,
+	// 	"Display",
+	// 	[]syntax.Field{syntax.NewField("message", "string")})
 
 	// invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
 
-	vendingFile.AddFunction("validateCoin",
+	validateCoinFunction := vendingFile.AddFunction("validateCoin",
 		[]syntax.Field{syntax.NewField("s", "string")},
-		[]syntax.Field{syntax.NewField("", "int"), syntax.NewField("", "bool")},
+		[]syntax.Field{syntax.NewField("value", "int"), syntax.NewField("ok", "bool")},
 		[]string{"0", "false"})
 
 	vendingTestFile, err := washer.CreateFile("vending/vending_test.go", "vending")
@@ -56,13 +56,7 @@ func main() {
 		[]syntax.Field{},
 		[]string{})
 
-	fn.Append(`value, ok := validateCoin("x")`)
-
-	fn.Append(`if value != 0 {
-		t.Errorf("Expected 0 but got %d", value)
-	}`)
-
-	fn.Append(`if ok {
-		t.Errorf("Expected ok to be false but got %v", ok)
-	}`)
+	if err = wash.AppendTestFunctionCall(fn, validateCoinFunction, []string{"0", "false"}); err != nil {
+		log.Fatalf("Error: %v", err)
+	}
 }

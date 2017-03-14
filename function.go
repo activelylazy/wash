@@ -3,13 +3,17 @@ package wash
 import (
 	"go/ast"
 	"log"
+
+	"github.com/activelylazy/wash/syntax"
 )
 
 // Function represents a function managed by wash
 type Function struct {
 	File         File
-	functionName string
+	FunctionName string
 	Decl         *ast.FuncDecl
+	Params       []syntax.Field
+	ReturnValues []syntax.Field
 }
 
 // AppendStmt writes a statement to the end of the function body
