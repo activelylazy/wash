@@ -19,9 +19,9 @@ func AppendTestFunctionCall(fn Function, calledFunction Function, expectedValues
 	fn.Append(strings.Join(returnValueNames, ", ") + ` := ` + calledFunction.FunctionName + `("x")`)
 
 	for i, varName := range returnValueNames {
-		fn.Append(fmt.Sprintf(`if %s != %v {
+		fn.Append(fmt.Sprintf(`if %v {
             t.Errorf("Expected %v but got %%v", %s)
-        }`, varName, expectedValues[i], expectedValues[i], varName))
+        }`, defineComparison(varName, expectedValues[i]), expectedValues[i], varName))
 	}
 
 	return nil
@@ -33,4 +33,14 @@ func getNames(fields []syntax.Field) []string {
 		names[i] = f.FieldName
 	}
 	return names
+}
+
+func defineComparison(varName string, expectedValue string) string {
+	if expectedValue == "true" {
+		return varName
+	}
+	if expectedValue == "false" {
+		return "!" + varName
+	}
+	return fmt.Sprintf("%s == %v", varName, expectedValue)
 }
