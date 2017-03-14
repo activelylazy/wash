@@ -51,12 +51,7 @@ func main() {
 
 	vendingTestFile.AddImport("", "testing")
 
-	fn := vendingTestFile.AddFunction("TestValidateCoinReturnsZeroFalseForInvalidCoin",
-		[]syntax.Field{syntax.NewField("t", "*testing.T")},
-		[]syntax.Field{},
-		[]string{})
-
-	if err = wash.AppendTestFunctionCall(fn, validateCoinFunction, []string{"0", "false"}); err != nil {
+	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []string{"0", "false"}); err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 }

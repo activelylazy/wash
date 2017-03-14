@@ -8,8 +8,13 @@ import (
 	"github.com/activelylazy/wash/syntax"
 )
 
-// AppendTestFunctionCall appends code to a (test) function which verifies a call to a function
-func AppendTestFunctionCall(fn Function, calledFunction Function, expectedValues []string) error {
+// WriteFunctionCallTest appends a test to a file which verifies a call to a function
+func WriteFunctionCallTest(testFile *File, calledFunction Function, expectedValues []string) error {
+	fn := testFile.AddFunction("TestValidateCoinReturnsZeroFalseForInvalidCoin",
+		[]syntax.Field{syntax.NewField("t", "*testing.T")},
+		[]syntax.Field{},
+		[]string{})
+
 	if len(calledFunction.ReturnValues) != len(expectedValues) {
 		return errors.New("Number of expected values is not the same as number of values returned from function")
 	}
