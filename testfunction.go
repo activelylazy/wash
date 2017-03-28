@@ -9,7 +9,7 @@ import (
 )
 
 // WriteFunctionCallTest appends a test to a file which verifies a call to a function
-func WriteFunctionCallTest(testFile *File, calledFunction Function, expectedValues []string) error {
+func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []DomainConcept, expectedValues []string) error {
 	testFile.AddImport("", "testing")
 
 	fn := testFile.AddFunction("TestValidateCoinReturnsZeroFalseForInvalidCoin",
@@ -20,10 +20,14 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, expectedValu
 	if len(calledFunction.ReturnValues) != len(expectedValues) {
 		return errors.New("Number of expected values is not the same as number of values returned from function")
 	}
+	if len(calledFunction.Params) != len(givenValues) {
+		return errors.New("Number of given values is not the same as number of arguments function expects")
+	}
 
 	returnValueNames := getNames(calledFunction.ReturnValues)
+	arguments := getArguments(givenValues)
 
-	fn.Append(strings.Join(returnValueNames, ", ") + ` := ` + calledFunction.FunctionName + `("x")`)
+	fn.Append(strings.Join(returnValueNames, ", ") + ` := ` + calledFunction.FunctionName + "(" + strings.Join(arguments, ", ") + ")")
 
 	for i, varName := range returnValueNames {
 		fn.Append(fmt.Sprintf(`if %v {
@@ -32,6 +36,14 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, expectedValu
 	}
 
 	return nil
+}
+
+func getArguments(values []DomainConcept) []string {
+	arguments := make([]string, len(values))
+	for i, f := range values {
+		arguments[i] = f.String()
+	}
+	return arguments
 }
 
 func getNames(fields []syntax.Field) []string {

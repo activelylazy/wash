@@ -40,6 +40,14 @@ func NewWasher(basePath string) (*Washer, error) {
 	}, nil
 }
 
+// String converts a DomainConcept to a string representation to output into code
+func (c DomainConcept) String() string {
+	if c.typeName == "string" {
+		return "\"" + c.value + "\""
+	}
+	return c.value
+}
+
 // CreateFile creates a new go file
 func (washer *Washer) CreateFile(filename string, packageName string) (*File, error) {
 	targetFilename := path.Join(washer.BasePath, filename)
