@@ -14,7 +14,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 
 	givenValueNames := getConceptNames(givenValues)
 
-	fn := testFile.AddFunction("TestValidateCoinReturnsZeroFalseFor"+strings.Join(givenValueNames, ""),
+	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ReturnsZeroFalseFor"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
 		[]syntax.Field{},
 		[]string{})
@@ -43,7 +43,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 func getConceptNames(values []DomainConcept) []string {
 	names := make([]string, len(values))
 	for i, f := range values {
-		names[i] = f.name
+		names[i] = strings.Title(f.name)
 	}
 	return names
 }
