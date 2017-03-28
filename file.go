@@ -48,7 +48,7 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnValu
 func conceptsToFields(concepts []DomainConcept) []syntax.Field {
 	results := make([]syntax.Field, len(concepts))
 	for i, c := range concepts {
-		results[i] = syntax.NewField(c.name, c.typeName)
+		results[i] = syntax.NewField(c.Name, c.TypeName)
 	}
 	return results
 }

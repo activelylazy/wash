@@ -42,7 +42,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 func getConceptNames(values []DomainConcept) []string {
 	names := make([]string, len(values))
 	for i, f := range values {
-		names[i] = strings.Title(f.name)
+		names[i] = strings.Title(f.Name)
 	}
 	return names
 }

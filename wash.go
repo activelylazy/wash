@@ -20,8 +20,8 @@ type Washer struct {
 
 // DomainConcept represents a named, typed value in the system
 type DomainConcept struct {
-	name     string
-	typeName string
+	Name     string
+	TypeName string
 	value    string
 }
 
@@ -42,7 +42,7 @@ func NewWasher(basePath string) (*Washer, error) {
 
 // String converts a DomainConcept to a string representation to output into code
 func (c DomainConcept) String() string {
-	if c.typeName == "string" {
+	if c.TypeName == "string" {
 		return "\"" + c.value + "\""
 	}
 	return c.value
@@ -88,8 +88,8 @@ func (w *File) Write() error {
 // NewDomainConcept adds a new domain concept - a named, typed value
 func (washer *Washer) NewDomainConcept(name string, typeName string, value string) DomainConcept {
 	c := DomainConcept{
-		name:     name,
-		typeName: typeName,
+		Name:     name,
+		TypeName: typeName,
 		value:    value,
 	}
 	washer.concepts[name] = c

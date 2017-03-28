@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/activelylazy/wash"
-	"github.com/activelylazy/wash/syntax"
+	"github.com/activelylazy/wash/incant"
 )
 
 func main() {
@@ -37,11 +37,10 @@ func main() {
 	zeroValue := washer.NewDomainConcept("value", "int", "0")
 	notOk := washer.NewDomainConcept("ok", "bool", "false")
 
-	validateCoinFunction := vendingFile.AddFunction("validateCoin",
-		[]syntax.Field{syntax.NewField("s", "string")},
-		[]wash.DomainConcept{zeroValue, notOk})
-
-	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []wash.DomainConcept{invalidCoin}, []wash.DomainConcept{zeroValue, notOk}); err != nil {
-		log.Fatalf("Error: %v", err)
-	}
+	incant.NewFunction().
+		In(vendingFile).Named("validateCoin").
+		WithTestIn(vendingTestFile).
+		WhenGiven(invalidCoin).
+		Returns(zeroValue, notOk).
+		Build()
 }
