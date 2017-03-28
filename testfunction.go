@@ -12,7 +12,9 @@ import (
 func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []DomainConcept, expectedValues []string) error {
 	testFile.AddImport("", "testing")
 
-	fn := testFile.AddFunction("TestValidateCoinReturnsZeroFalseForInvalidCoin",
+	givenValueNames := getConceptNames(givenValues)
+
+	fn := testFile.AddFunction("TestValidateCoinReturnsZeroFalseFor"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
 		[]syntax.Field{},
 		[]string{})
@@ -36,6 +38,14 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 	}
 
 	return nil
+}
+
+func getConceptNames(values []DomainConcept) []string {
+	names := make([]string, len(values))
+	for i, f := range values {
+		names[i] = f.name
+	}
+	return names
 }
 
 func getArguments(values []DomainConcept) []string {

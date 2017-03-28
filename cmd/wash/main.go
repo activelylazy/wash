@@ -37,7 +37,7 @@ func main() {
 	// 	"Display",
 	// 	[]syntax.Field{syntax.NewField("message", "string")})
 
-	invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
+	invalidCoin := washer.NewDomainConcept("InvalidCoin", "string", "x")
 
 	validateCoinFunction := vendingFile.AddFunction("validateCoin",
 		[]syntax.Field{syntax.NewField("s", "string")},
