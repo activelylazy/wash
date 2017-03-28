@@ -9,12 +9,15 @@ import (
 )
 
 // WriteFunctionCallTest appends a test to a file which verifies a call to a function
-func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []DomainConcept, expectedValues []string) error {
+func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []DomainConcept, expectedValues []DomainConcept) error {
 	testFile.AddImport("", "testing")
 
 	givenValueNames := getConceptNames(givenValues)
+	returnValueNames := getNames(calledFunction.ReturnValues)
+	arguments := getArguments(givenValues)
+	expectedValueNames := getConceptNames(expectedValues)
 
-	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ReturnsZeroFalseFor"+strings.Join(givenValueNames, ""),
+	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ShouldReturn"+strings.Join(expectedValueNames, "")+"Given"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
 		[]syntax.Field{},
 		[]string{})
@@ -25,9 +28,6 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 	if len(calledFunction.Params) != len(givenValues) {
 		return errors.New("Number of given values is not the same as number of arguments function expects")
 	}
-
-	returnValueNames := getNames(calledFunction.ReturnValues)
-	arguments := getArguments(givenValues)
 
 	fn.Append(strings.Join(returnValueNames, ", ") + ` := ` + calledFunction.FunctionName + "(" + strings.Join(arguments, ", ") + ")")
 
@@ -64,12 +64,12 @@ func getNames(fields []syntax.Field) []string {
 	return names
 }
 
-func defineComparison(varName string, expectedValue string) string {
-	if expectedValue == "true" {
+func defineComparison(varName string, expectedValue DomainConcept) string {
+	if expectedValue.value == "true" {
 		return "!" + varName
 	}
-	if expectedValue == "false" {
+	if expectedValue.value == "false" {
 		return varName
 	}
-	return fmt.Sprintf("%s != %v", varName, expectedValue)
+	return fmt.Sprintf("%s != %v", varName, expectedValue.value)
 }
