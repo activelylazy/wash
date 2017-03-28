@@ -56,10 +56,10 @@ func getNames(fields []syntax.Field) []string {
 
 func defineComparison(varName string, expectedValue string) string {
 	if expectedValue == "true" {
-		return varName
-	}
-	if expectedValue == "false" {
 		return "!" + varName
 	}
-	return fmt.Sprintf("%s == %v", varName, expectedValue)
+	if expectedValue == "false" {
+		return varName
+	}
+	return fmt.Sprintf("%s != %v", varName, expectedValue)
 }
