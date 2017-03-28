@@ -27,12 +27,13 @@ func (f File) AddImport(name string, path string) {
 }
 
 // AddFunction adds a new function to this file
-func (f File) AddFunction(functionName string, params []syntax.Field, returnFields []syntax.Field, returnValues []DomainConcept) Function {
+func (f File) AddFunction(functionName string, params []syntax.Field, returnValues []DomainConcept) Function {
 	log.Printf("Adding function %s to %s", functionName, f.TargetFilename)
 	statements := []ast.Stmt{}
 	if len(returnValues) > 0 {
 		statements = append(statements, newReturnStmt(returnValues))
 	}
+	returnFields := conceptsToFields(returnValues)
 	decl := addFunction(f.File, functionName, params, returnFields, statements)
 	f.Write()
 	return Function{
@@ -42,6 +43,14 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnFiel
 		Params:       params,
 		ReturnValues: returnFields,
 	}
+}
+
+func conceptsToFields(concepts []DomainConcept) []syntax.Field {
+	results := make([]syntax.Field, len(concepts))
+	for i, c := range concepts {
+		results[i] = syntax.NewField(c.name, c.typeName)
+	}
+	return results
 }
 
 // AddStruct adds a new struct to this file

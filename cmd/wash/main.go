@@ -33,16 +33,15 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	invalidCoin := washer.NewDomainConcept("InvalidCoin", "string", "x")
-	ZERO := washer.NewDomainConcept("Zero", "int", "0")
-	FALSE := washer.NewDomainConcept("False", "boolean", "false")
+	invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
+	zeroValue := washer.NewDomainConcept("value", "int", "0")
+	notOk := washer.NewDomainConcept("ok", "bool", "false")
 
 	validateCoinFunction := vendingFile.AddFunction("validateCoin",
 		[]syntax.Field{syntax.NewField("s", "string")},
-		[]syntax.Field{syntax.NewField("value", "int"), syntax.NewField("ok", "bool")},
-		[]wash.DomainConcept{ZERO, FALSE})
+		[]wash.DomainConcept{zeroValue, notOk})
 
-	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []wash.DomainConcept{invalidCoin}, []wash.DomainConcept{ZERO, FALSE}); err != nil {
+	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []wash.DomainConcept{invalidCoin}, []wash.DomainConcept{zeroValue, notOk}); err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 }

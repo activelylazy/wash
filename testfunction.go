@@ -19,7 +19,6 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 
 	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ShouldReturn"+strings.Join(expectedValueNames, "")+"Given"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
-		[]syntax.Field{},
 		[]DomainConcept{})
 
 	if len(calledFunction.ReturnValues) != len(expectedValues) {
