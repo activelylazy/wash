@@ -17,9 +17,10 @@ type NewFunctionBuilder struct {
 }
 
 // NewFunction begins creation of a new function
-func NewFunction() *NewFunctionBuilder {
+func NewFunction(name string) *NewFunctionBuilder {
 	return &NewFunctionBuilder{
 		arguments: make([]wash.DomainConcept, 0),
+		name:      name,
 	}
 }
 
@@ -32,12 +33,6 @@ func (b *NewFunctionBuilder) In(f *wash.File) *NewFunctionBuilder {
 // WithTestIn specifies the file to write the test to
 func (b *NewFunctionBuilder) WithTestIn(f *wash.File) *NewFunctionBuilder {
 	b.testFile = f
-	return b
-}
-
-// Named sets the name of the new function
-func (b *NewFunctionBuilder) Named(s string) *NewFunctionBuilder {
-	b.name = s
 	return b
 }
 

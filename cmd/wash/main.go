@@ -37,8 +37,8 @@ func main() {
 	zeroValue := washer.NewDomainConcept("value", "int", "0")
 	notOk := washer.NewDomainConcept("ok", "bool", "false")
 
-	incant.NewFunction().
-		In(vendingFile).Named("validateCoin").
+	incant.NewFunction("validateCoin").
+		In(vendingFile).
 		WithTestIn(vendingTestFile).
 		WhenGiven(invalidCoin).
 		Returns(zeroValue, notOk).
