@@ -40,7 +40,7 @@ func main() {
 	incant.NewFunction("validateCoin").
 		In(vendingFile).
 		WithTestIn(vendingTestFile).
-		WhenGiven(invalidCoin).
-		Returns(zeroValue, notOk).
+		Given(invalidCoin).
+		ShouldReturn(zeroValue, notOk).
 		Build()
 }

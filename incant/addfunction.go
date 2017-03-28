@@ -46,13 +46,13 @@ func (b *NewFunctionBuilder) Build() {
 }
 
 // WhenGiven specifies an initial set of arguments to pass to the new function in the first test
-func (b *NewFunctionBuilder) WhenGiven(arguments ...wash.DomainConcept) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) Given(arguments ...wash.DomainConcept) *NewFunctionBuilder {
 	b.arguments = arguments
 	return b
 }
 
 // Returns specifies the default return values for the new function
-func (b *NewFunctionBuilder) Returns(values ...wash.DomainConcept) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) ShouldReturn(values ...wash.DomainConcept) *NewFunctionBuilder {
 	b.returnValues = values
 	return b
 }
