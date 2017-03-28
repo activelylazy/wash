@@ -27,7 +27,7 @@ func (f File) AddImport(name string, path string) {
 }
 
 // AddFunction adds a new function to this file
-func (f File) AddFunction(functionName string, params []syntax.Field, returnFields []syntax.Field, returnValues []string) Function {
+func (f File) AddFunction(functionName string, params []syntax.Field, returnFields []syntax.Field, returnValues []DomainConcept) Function {
 	log.Printf("Adding function %s to %s", functionName, f.TargetFilename)
 	statements := []ast.Stmt{}
 	if len(returnValues) > 0 {
@@ -137,10 +137,10 @@ func newStructType(fieldDeclarations []syntax.Field) *ast.StructType {
 	}
 }
 
-func newReturnStmt(returnValues []string) *ast.ReturnStmt {
+func newReturnStmt(returnValues []DomainConcept) *ast.ReturnStmt {
 	results := []ast.Expr{}
 	for _, s := range returnValues {
-		results = append(results, syntax.NewBasicLit(s))
+		results = append(results, syntax.NewBasicLit(s.value))
 	}
 	return &ast.ReturnStmt{
 		Results: results,

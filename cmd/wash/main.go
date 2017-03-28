@@ -40,7 +40,7 @@ func main() {
 	validateCoinFunction := vendingFile.AddFunction("validateCoin",
 		[]syntax.Field{syntax.NewField("s", "string")},
 		[]syntax.Field{syntax.NewField("value", "int"), syntax.NewField("ok", "bool")},
-		[]string{"0", "false"})
+		[]wash.DomainConcept{ZERO, FALSE})
 
 	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []wash.DomainConcept{invalidCoin}, []wash.DomainConcept{ZERO, FALSE}); err != nil {
 		log.Fatalf("Error: %v", err)

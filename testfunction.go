@@ -20,7 +20,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ShouldReturn"+strings.Join(expectedValueNames, "")+"Given"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
 		[]syntax.Field{},
-		[]string{})
+		[]DomainConcept{})
 
 	if len(calledFunction.ReturnValues) != len(expectedValues) {
 		return errors.New("Number of expected values is not the same as number of values returned from function")
