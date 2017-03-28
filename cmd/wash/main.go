@@ -28,14 +28,10 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	// displayFile, err := washer.CreateFile("vending/display.go", "vending")
-	// if err != nil {
-	// 	log.Fatalf("Error creating file: %v", err)
-	// }
-
-	// displayFile.AddStruct(displayFile,
-	// 	"Display",
-	// 	[]syntax.Field{syntax.NewField("message", "string")})
+	vendingTestFile, err := washer.CreateFile("vending/vending_test.go", "vending")
+	if err != nil {
+		log.Fatalf("Error creating file: %v", err)
+	}
 
 	invalidCoin := washer.NewDomainConcept("InvalidCoin", "string", "x")
 	ZERO := washer.NewDomainConcept("Zero", "int", "0")
@@ -45,11 +41,6 @@ func main() {
 		[]syntax.Field{syntax.NewField("s", "string")},
 		[]syntax.Field{syntax.NewField("value", "int"), syntax.NewField("ok", "bool")},
 		[]string{"0", "false"})
-
-	vendingTestFile, err := washer.CreateFile("vending/vending_test.go", "vending")
-	if err != nil {
-		log.Fatalf("Error creating file: %v", err)
-	}
 
 	if err = wash.WriteFunctionCallTest(vendingTestFile, validateCoinFunction, []wash.DomainConcept{invalidCoin}, []wash.DomainConcept{ZERO, FALSE}); err != nil {
 		log.Fatalf("Error: %v", err)
