@@ -15,14 +15,19 @@ type Washer struct {
 	pkgs     map[string]*ast.Package
 	Fset     *token.FileSet
 	BasePath string
-	concepts map[string]DomainConcept
 }
 
 // DomainConcept represents a named, typed value in the system
 type DomainConcept struct {
+	Name  string
+	Type  DomainType
+	value string
+}
+
+// DomainType represents a type of data in the system
+type DomainType struct {
 	Name     string
 	TypeName string
-	value    string
 }
 
 // NewWasher creates a new Washer
@@ -36,13 +41,12 @@ func NewWasher(basePath string) (*Washer, error) {
 		BasePath: basePath,
 		pkgs:     pkgs,
 		Fset:     fset,
-		concepts: make(map[string]DomainConcept),
 	}, nil
 }
 
 // String converts a DomainConcept to a string representation to output into code
 func (c DomainConcept) String() string {
-	if c.TypeName == "string" {
+	if c.Type.TypeName == "string" {
 		return "\"" + c.value + "\""
 	}
 	return c.value
@@ -85,13 +89,20 @@ func (w *File) Write() error {
 	return nil
 }
 
-// NewDomainConcept adds a new domain concept - a named, typed value
-func (washer *Washer) NewDomainConcept(name string, typeName string, value string) DomainConcept {
-	c := DomainConcept{
+// NewDomainType adds a new domain type
+func NewDomainType(name string, typeName string) DomainType {
+	return DomainType{
 		Name:     name,
 		TypeName: typeName,
-		value:    value,
 	}
-	washer.concepts[name] = c
+}
+
+// NewInstance adds a new domain concept - a named instance of a domain type with a specific value
+func (t DomainType) NewInstance(name string, value string) DomainConcept {
+	c := DomainConcept{
+		Name:  name,
+		Type:  t,
+		value: value,
+	}
 	return c
 }

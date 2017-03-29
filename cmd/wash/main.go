@@ -33,9 +33,13 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	invalidCoin := washer.NewDomainConcept("invalidCoin", "string", "x")
-	zeroValue := washer.NewDomainConcept("value", "int", "0")
-	notOk := washer.NewDomainConcept("ok", "bool", "false")
+	coin := wash.NewDomainType("coin", "string")
+	coinValue := wash.NewDomainType("value", "int")
+	okType := wash.NewDomainType("ok", "bool")
+
+	invalidCoin := coin.NewInstance("invalidCoin", "x")
+	zeroValue := coinValue.NewInstance("zero", "0")
+	notOk := okType.NewInstance("notOk", "false")
 
 	incant.NewFunction("validateCoin").
 		In(vendingFile).

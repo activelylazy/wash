@@ -45,13 +45,13 @@ func (b *NewFunctionBuilder) Build() {
 	}
 }
 
-// WhenGiven specifies an initial set of arguments to pass to the new function in the first test
+// Given specifies an initial set of arguments to pass to the new function in the first test
 func (b *NewFunctionBuilder) Given(arguments ...wash.DomainConcept) *NewFunctionBuilder {
 	b.arguments = arguments
 	return b
 }
 
-// Returns specifies the default return values for the new function
+// ShouldReturn specifies the default return values for the new function
 func (b *NewFunctionBuilder) ShouldReturn(values ...wash.DomainConcept) *NewFunctionBuilder {
 	b.returnValues = values
 	return b
@@ -60,7 +60,7 @@ func (b *NewFunctionBuilder) ShouldReturn(values ...wash.DomainConcept) *NewFunc
 func conceptsToFields(concepts []wash.DomainConcept) []syntax.Field {
 	results := make([]syntax.Field, len(concepts))
 	for i, c := range concepts {
-		results[i] = syntax.NewField(c.Name, c.TypeName)
+		results[i] = syntax.NewField(c.Type.Name, c.Type.TypeName)
 	}
 	return results
 }
