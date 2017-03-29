@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/activelylazy/wash"
+	"github.com/activelylazy/wash/domain"
 	"github.com/activelylazy/wash/incant"
 )
 
@@ -33,9 +34,9 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	coin := wash.NewDomainType("coin", "string")
-	coinValue := wash.NewDomainType("value", "int")
-	okType := wash.NewDomainType("ok", "bool")
+	coin := domain.NewDomainType("coin", "string")
+	coinValue := domain.NewDomainType("value", "int")
+	okType := domain.NewDomainType("ok", "bool")
 
 	invalidCoin := coin.NewInstance("invalidCoin", "x")
 	zeroValue := coinValue.NewInstance("zero", "0")

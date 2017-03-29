@@ -17,19 +17,6 @@ type Washer struct {
 	BasePath string
 }
 
-// DomainConcept represents a named, typed value in the system
-type DomainConcept struct {
-	Name  string
-	Type  DomainType
-	value string
-}
-
-// DomainType represents a type of data in the system
-type DomainType struct {
-	Name     string
-	TypeName string
-}
-
 // NewWasher creates a new Washer
 func NewWasher(basePath string) (*Washer, error) {
 	fset := token.NewFileSet()
@@ -42,14 +29,6 @@ func NewWasher(basePath string) (*Washer, error) {
 		pkgs:     pkgs,
 		Fset:     fset,
 	}, nil
-}
-
-// String converts a DomainConcept to a string representation to output into code
-func (c DomainConcept) String() string {
-	if c.Type.TypeName == "string" {
-		return "\"" + c.value + "\""
-	}
-	return c.value
 }
 
 // CreateFile creates a new go file
@@ -87,22 +66,4 @@ func (w *File) Write() error {
 	defer outfile.Close()
 	printer.Fprint(outfile, w.washer.Fset, w.File)
 	return nil
-}
-
-// NewDomainType adds a new domain type
-func NewDomainType(name string, typeName string) DomainType {
-	return DomainType{
-		Name:     name,
-		TypeName: typeName,
-	}
-}
-
-// NewInstance adds a new domain concept - a named instance of a domain type with a specific value
-func (t DomainType) NewInstance(name string, value string) DomainConcept {
-	c := DomainConcept{
-		Name:  name,
-		Type:  t,
-		value: value,
-	}
-	return c
 }

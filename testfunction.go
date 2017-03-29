@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/activelylazy/wash/domain"
 	"github.com/activelylazy/wash/syntax"
 )
 
 // WriteFunctionCallTest appends a test to a file which verifies a call to a function
-func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []DomainConcept, expectedValues []DomainConcept) error {
+func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []domain.DomainConcept, expectedValues []domain.DomainConcept) error {
 	testFile.AddImport("", "testing")
 
 	givenValueNames := getConceptNames(givenValues)
@@ -19,7 +20,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 
 	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ShouldReturn"+strings.Join(expectedValueNames, "")+"Given"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
-		[]DomainConcept{})
+		[]domain.DomainConcept{})
 
 	if len(calledFunction.ReturnValues) != len(expectedValues) {
 		return errors.New("Number of expected values is not the same as number of values returned from function")
@@ -39,7 +40,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 	return nil
 }
 
-func getConceptNames(values []DomainConcept) []string {
+func getConceptNames(values []domain.DomainConcept) []string {
 	names := make([]string, len(values))
 	for i, f := range values {
 		names[i] = strings.Title(f.Name)
@@ -47,7 +48,7 @@ func getConceptNames(values []DomainConcept) []string {
 	return names
 }
 
-func getArguments(values []DomainConcept) []string {
+func getArguments(values []domain.DomainConcept) []string {
 	arguments := make([]string, len(values))
 	for i, f := range values {
 		arguments[i] = f.String()
@@ -63,12 +64,12 @@ func getNames(fields []syntax.Field) []string {
 	return names
 }
 
-func defineComparison(varName string, expectedValue DomainConcept) string {
-	if expectedValue.value == "true" {
+func defineComparison(varName string, expectedValue domain.DomainConcept) string {
+	if expectedValue.Value == "true" {
 		return "!" + varName
 	}
-	if expectedValue.value == "false" {
+	if expectedValue.Value == "false" {
 		return varName
 	}
-	return fmt.Sprintf("%s != %v", varName, expectedValue.value)
+	return fmt.Sprintf("%s != %v", varName, expectedValue.Value)
 }
