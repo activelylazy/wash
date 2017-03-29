@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"log"
 
+	"github.com/activelylazy/wash/parser"
 	"github.com/activelylazy/wash/syntax"
 )
 
@@ -24,7 +25,7 @@ func (fn Function) AppendStmt(stmt ast.Stmt) {
 
 // Append writes the given go code to the end of the function body
 func (fn Function) Append(s string) {
-	stmt, err := ParseStatement(s)
+	stmt, err := parser.ParseStatement(s)
 	if err != nil {
 		log.Fatalf("Error parsing statement: %v", err)
 	}

@@ -1,4 +1,4 @@
-package wash
+package parser
 
 import (
 	"errors"
