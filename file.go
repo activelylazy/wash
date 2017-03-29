@@ -34,7 +34,7 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnValu
 	if len(returnValues) > 0 {
 		statements = append(statements, newReturnStmt(returnValues))
 	}
-	returnFields := conceptsToFields(returnValues)
+	returnFields := domain.ConceptsToFields(returnValues)
 	decl := addFunction(f.File, functionName, params, returnFields, statements)
 	f.Write()
 	return Function{
@@ -44,14 +44,6 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnValu
 		Params:       params,
 		ReturnValues: returnFields,
 	}
-}
-
-func conceptsToFields(concepts []domain.Concept) []syntax.Field {
-	results := make([]syntax.Field, len(concepts))
-	for i, c := range concepts {
-		results[i] = syntax.NewField(c.Type.Name, c.Type.TypeName)
-	}
-	return results
 }
 
 // AddStruct adds a new struct to this file

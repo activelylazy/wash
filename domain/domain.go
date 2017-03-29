@@ -1,13 +1,15 @@
 package domain
 
-// DomainConcept represents a named, typed value in the system
+import "github.com/activelylazy/wash/syntax"
+
+// Concept represents a named, typed value in the system
 type Concept struct {
 	Name  string
 	Type  Type
 	Value string
 }
 
-// DomainType represents a type of data in the system
+// Type represents a type of data in the system
 type Type struct {
 	Name     string
 	TypeName string
@@ -21,7 +23,7 @@ func (c Concept) String() string {
 	return c.Value
 }
 
-// NewDomainType adds a new domain type
+// NewType adds a new domain type
 func NewType(name string, typeName string) Type {
 	return Type{
 		Name:     name,
@@ -37,4 +39,13 @@ func (t Type) NewInstance(name string, value string) Concept {
 		Value: value,
 	}
 	return c
+}
+
+// ConceptsToFields converts a slice of Concept to a slice of fields, using the Type's names
+func ConceptsToFields(concepts []Concept) []syntax.Field {
+	results := make([]syntax.Field, len(concepts))
+	for i, c := range concepts {
+		results[i] = syntax.NewField(c.Type.Name, c.Type.TypeName)
+	}
+	return results
 }

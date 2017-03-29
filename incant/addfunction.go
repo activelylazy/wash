@@ -5,7 +5,6 @@ import (
 
 	"github.com/activelylazy/wash"
 	"github.com/activelylazy/wash/domain"
-	"github.com/activelylazy/wash/syntax"
 )
 
 // NewFunctionBuilder allows the fluent creation of a new function
@@ -39,7 +38,7 @@ func (b *NewFunctionBuilder) WithTestIn(f *wash.File) *NewFunctionBuilder {
 
 // Build builds the new function
 func (b *NewFunctionBuilder) Build() {
-	fn := b.file.AddFunction(b.name, conceptsToFields(b.arguments), b.returnValues)
+	fn := b.file.AddFunction(b.name, domain.ConceptsToFields(b.arguments), b.returnValues)
 
 	if err := wash.WriteFunctionCallTest(b.testFile, fn, b.arguments, b.returnValues); err != nil {
 		log.Fatalf("Error: %v", err)
@@ -56,12 +55,4 @@ func (b *NewFunctionBuilder) Given(arguments ...domain.Concept) *NewFunctionBuil
 func (b *NewFunctionBuilder) ShouldReturn(values ...domain.Concept) *NewFunctionBuilder {
 	b.returnValues = values
 	return b
-}
-
-func conceptsToFields(concepts []domain.Concept) []syntax.Field {
-	results := make([]syntax.Field, len(concepts))
-	for i, c := range concepts {
-		results[i] = syntax.NewField(c.Type.Name, c.Type.TypeName)
-	}
-	return results
 }
