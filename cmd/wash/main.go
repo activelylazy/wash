@@ -34,9 +34,9 @@ func main() {
 		log.Fatalf("Error creating file: %v", err)
 	}
 
-	coin := domain.NewDomainType("coin", "string")
-	coinValue := domain.NewDomainType("value", "int")
-	okType := domain.NewDomainType("ok", "bool")
+	coin := domain.NewType("coin", "string")
+	coinValue := domain.NewType("value", "int")
+	okType := domain.NewType("ok", "bool")
 
 	invalidCoin := coin.NewInstance("invalidCoin", "x")
 	zeroValue := coinValue.NewInstance("zero", "0")

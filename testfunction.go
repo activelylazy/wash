@@ -10,7 +10,7 @@ import (
 )
 
 // WriteFunctionCallTest appends a test to a file which verifies a call to a function
-func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []domain.DomainConcept, expectedValues []domain.DomainConcept) error {
+func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []domain.Concept, expectedValues []domain.Concept) error {
 	testFile.AddImport("", "testing")
 
 	givenValueNames := getConceptNames(givenValues)
@@ -20,7 +20,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 
 	fn := testFile.AddFunction("Test"+strings.Title(calledFunction.FunctionName)+"ShouldReturn"+strings.Join(expectedValueNames, "")+"Given"+strings.Join(givenValueNames, ""),
 		[]syntax.Field{syntax.NewField("t", "*testing.T")},
-		[]domain.DomainConcept{})
+		[]domain.Concept{})
 
 	if len(calledFunction.ReturnValues) != len(expectedValues) {
 		return errors.New("Number of expected values is not the same as number of values returned from function")
@@ -40,7 +40,7 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 	return nil
 }
 
-func getConceptNames(values []domain.DomainConcept) []string {
+func getConceptNames(values []domain.Concept) []string {
 	names := make([]string, len(values))
 	for i, f := range values {
 		names[i] = strings.Title(f.Name)
@@ -48,7 +48,7 @@ func getConceptNames(values []domain.DomainConcept) []string {
 	return names
 }
 
-func getArguments(values []domain.DomainConcept) []string {
+func getArguments(values []domain.Concept) []string {
 	arguments := make([]string, len(values))
 	for i, f := range values {
 		arguments[i] = f.String()
@@ -64,7 +64,7 @@ func getNames(fields []syntax.Field) []string {
 	return names
 }
 
-func defineComparison(varName string, expectedValue domain.DomainConcept) string {
+func defineComparison(varName string, expectedValue domain.Concept) string {
 	if expectedValue.Value == "true" {
 		return "!" + varName
 	}

@@ -13,14 +13,14 @@ type NewFunctionBuilder struct {
 	file         *wash.File
 	testFile     *wash.File
 	name         string
-	returnValues []domain.DomainConcept
-	arguments    []domain.DomainConcept
+	returnValues []domain.Concept
+	arguments    []domain.Concept
 }
 
 // NewFunction begins creation of a new function
 func NewFunction(name string) *NewFunctionBuilder {
 	return &NewFunctionBuilder{
-		arguments: make([]domain.DomainConcept, 0),
+		arguments: make([]domain.Concept, 0),
 		name:      name,
 	}
 }
@@ -47,18 +47,18 @@ func (b *NewFunctionBuilder) Build() {
 }
 
 // Given specifies an initial set of arguments to pass to the new function in the first test
-func (b *NewFunctionBuilder) Given(arguments ...domain.DomainConcept) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) Given(arguments ...domain.Concept) *NewFunctionBuilder {
 	b.arguments = arguments
 	return b
 }
 
 // ShouldReturn specifies the default return values for the new function
-func (b *NewFunctionBuilder) ShouldReturn(values ...domain.DomainConcept) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) ShouldReturn(values ...domain.Concept) *NewFunctionBuilder {
 	b.returnValues = values
 	return b
 }
 
-func conceptsToFields(concepts []domain.DomainConcept) []syntax.Field {
+func conceptsToFields(concepts []domain.Concept) []syntax.Field {
 	results := make([]syntax.Field, len(concepts))
 	for i, c := range concepts {
 		results[i] = syntax.NewField(c.Type.Name, c.Type.TypeName)

@@ -28,7 +28,7 @@ func (f File) AddImport(name string, path string) {
 }
 
 // AddFunction adds a new function to this file
-func (f File) AddFunction(functionName string, params []syntax.Field, returnValues []domain.DomainConcept) Function {
+func (f File) AddFunction(functionName string, params []syntax.Field, returnValues []domain.Concept) Function {
 	log.Printf("Adding function %s to %s", functionName, f.TargetFilename)
 	statements := []ast.Stmt{}
 	if len(returnValues) > 0 {
@@ -46,7 +46,7 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnValu
 	}
 }
 
-func conceptsToFields(concepts []domain.DomainConcept) []syntax.Field {
+func conceptsToFields(concepts []domain.Concept) []syntax.Field {
 	results := make([]syntax.Field, len(concepts))
 	for i, c := range concepts {
 		results[i] = syntax.NewField(c.Type.Name, c.Type.TypeName)
@@ -147,7 +147,7 @@ func newStructType(fieldDeclarations []syntax.Field) *ast.StructType {
 	}
 }
 
-func newReturnStmt(returnValues []domain.DomainConcept) *ast.ReturnStmt {
+func newReturnStmt(returnValues []domain.Concept) *ast.ReturnStmt {
 	results := []ast.Expr{}
 	for _, s := range returnValues {
 		results = append(results, syntax.NewBasicLit(s.Value))
