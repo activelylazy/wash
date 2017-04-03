@@ -1,9 +1,6 @@
 package main
 
 import (
-	"flag"
-	"log"
-
 	"github.com/activelylazy/wash"
 	"github.com/activelylazy/wash/domain"
 	"github.com/activelylazy/wash/incant"
@@ -11,28 +8,22 @@ import (
 
 func main() {
 
-	basePath := flag.String("base", "", "the base path to read/write source code")
+	// basePath := flag.String("base", "", "the base path to read/write source code")
 
-	flag.Parse()
+	// flag.Parse()
 
-	if *basePath == "" {
-		log.Fatalf("Base path is required")
-	}
+	// if *basePath == "" {
+	// 	log.Fatalf("Base path is required")
+	// }
 
-	washer, err := wash.NewWasher(*basePath)
-	if err != nil {
-		log.Fatalf("Error parsing: %v", err)
-	}
+	// washer, err := wash.NewWasher(*basePath)
+	// if err != nil {
+	// 	log.Fatalf("Error parsing: %v", err)
+	// }
 
-	vendingFile, err := washer.CreateFile("vending/vending.go", "vending")
-	if err != nil {
-		log.Fatalf("Error creating file: %v", err)
-	}
-
-	vendingTestFile, err := washer.CreateFile("vending/vending_test.go", "vending")
-	if err != nil {
-		log.Fatalf("Error creating file: %v", err)
-	}
+	wash.SetBasePath("github.com/activelylazy/generated-vending")
+	vendingFile := wash.CreateFile("vending/vending.go", "vending")
+	vendingTestFile := wash.CreateFile("vending/vending_test.go", "vending")
 
 	coin := domain.NewType("coin", "string")
 	coinValue := domain.NewType("value", "int")

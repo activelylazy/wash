@@ -1,6 +1,7 @@
 package wash
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -8,13 +9,46 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 )
+
+var ctx = context{}
+
+type context struct {
+	washer *Washer
+}
 
 // Washer allows modification of Go code
 type Washer struct {
 	pkgs     map[string]*ast.Package
 	Fset     *token.FileSet
 	BasePath string
+}
+
+// SetBasePath sets the base path to use when writing source files
+func SetBasePath(packageName string) {
+	var gopath = os.Getenv("GOPATH")
+	var gorootSrc = filepath.Join(filepath.Clean(gopath), "src")
+	var basePath = filepath.Join(gorootSrc, packageName)
+
+	if _, err := os.Stat(basePath); err != nil {
+		fmt.Printf("[ERROR] Could not find package path %s\n", basePath)
+	}
+
+	washer, err := NewWasher(basePath)
+	if err != nil {
+		fmt.Printf("[ERROR] Could not set base path: %s\n", err)
+	}
+	ctx.washer = washer
+}
+
+func CreateFile(filename string, packageName string) *File {
+	f, err := ctx.washer.CreateFile(filename, packageName)
+	if err != nil {
+		fmt.Printf("[ERROR] Could not create file: %s\n", err)
+		return nil
+	}
+	return f
 }
 
 // NewWasher creates a new Washer
