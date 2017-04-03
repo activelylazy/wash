@@ -30,6 +30,11 @@ func (b *NewFunctionBuilder) In(f *wash.File) *NewFunctionBuilder {
 	return b
 }
 
+// InFile specifies the file for the new function to be placed in by name/path
+func (b *NewFunctionBuilder) InFile(name string) *NewFunctionBuilder {
+	return b.In(wash.FindFile(name))
+}
+
 // WithTestIn specifies the file to write the test to
 func (b *NewFunctionBuilder) WithTestIn(f *wash.File) *NewFunctionBuilder {
 	b.testFile = f

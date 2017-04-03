@@ -8,7 +8,7 @@ import (
 
 func main() {
 	wash.SetBasePath("github.com/activelylazy/generated-vending")
-	vendingFile := wash.CreateFile("vending/vending.go", "vending")
+	_ = wash.CreateFile("vending/vending.go", "vending")
 	vendingTestFile := wash.CreateFile("vending/vending_test.go", "vending")
 
 	_ = wash.FindFile("vending/vending.go")
@@ -22,7 +22,7 @@ func main() {
 	notOk := okType.NewInstance("notOk", "false")
 
 	incant.NewFunction("validateCoin").
-		In(vendingFile).
+		InFile("vending/vending.go").
 		WithTestIn(vendingTestFile).
 		Given(invalidCoin).
 		ShouldReturn(zeroValue, notOk).
