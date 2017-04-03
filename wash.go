@@ -65,16 +65,22 @@ func FindFile(filename string) *File {
 
 // NewWasher creates a new Washer
 func newWasher(basePath string) (*Washer, error) {
-	fset := token.NewFileSet()
-	pkgs, err := getAllPackages(fset, basePath)
-	if err != nil {
-		return nil, err
-	}
-	return &Washer{
+	w := &Washer{
 		BasePath: basePath,
-		pkgs:     pkgs,
-		Fset:     fset,
-	}, nil
+	}
+	err := w.refresh()
+	return w, err
+}
+
+func (washer *Washer) refresh() error {
+	fset := token.NewFileSet()
+	pkgs, err := getAllPackages(fset, washer.BasePath)
+	if err != nil {
+		return err
+	}
+	washer.Fset = fset
+	washer.pkgs = pkgs
+	return err
 }
 
 func getAllPackages(fset *token.FileSet, basePath string) (map[string]*ast.Package, error) {
@@ -118,6 +124,7 @@ func (washer *Washer) createFile(filename string, packageName string) (*File, er
 	if err := washFile.Write(); err != nil {
 		return nil, err
 	}
+	washer.refresh()
 	return washFile, nil
 }
 
