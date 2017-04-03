@@ -35,7 +35,7 @@ func SetBasePath(packageName string) {
 		fmt.Printf("[ERROR] Could not find package path %s\n", basePath)
 	}
 
-	washer, err := NewWasher(basePath)
+	washer, err := newWasher(basePath)
 	if err != nil {
 		fmt.Printf("[ERROR] Could not set base path: %s\n", err)
 	}
@@ -43,7 +43,7 @@ func SetBasePath(packageName string) {
 }
 
 func CreateFile(filename string, packageName string) *File {
-	f, err := ctx.washer.CreateFile(filename, packageName)
+	f, err := ctx.washer.createFile(filename, packageName)
 	if err != nil {
 		fmt.Printf("[ERROR] Could not create file: %s\n", err)
 		return nil
@@ -52,7 +52,7 @@ func CreateFile(filename string, packageName string) *File {
 }
 
 // NewWasher creates a new Washer
-func NewWasher(basePath string) (*Washer, error) {
+func newWasher(basePath string) (*Washer, error) {
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, basePath, nil, parser.AllErrors)
 	if err != nil {
@@ -66,7 +66,7 @@ func NewWasher(basePath string) (*Washer, error) {
 }
 
 // CreateFile creates a new go file
-func (washer *Washer) CreateFile(filename string, packageName string) (*File, error) {
+func (washer *Washer) createFile(filename string, packageName string) (*File, error) {
 	targetFilename := path.Join(washer.BasePath, filename)
 	log.Printf("Creating file %s in package %s", targetFilename, packageName)
 	file := newFile(packageName)
