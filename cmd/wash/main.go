@@ -11,6 +11,8 @@ func main() {
 	vendingFile := wash.CreateFile("vending/vending.go", "vending")
 	vendingTestFile := wash.CreateFile("vending/vending_test.go", "vending")
 
+	_ = wash.FindFile("vending/vending.go")
+
 	coin := domain.NewType("coin", "string")
 	coinValue := domain.NewType("value", "int")
 	okType := domain.NewType("ok", "bool")

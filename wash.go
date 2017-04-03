@@ -6,10 +6,12 @@ import (
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 var ctx = context{}
@@ -42,6 +44,7 @@ func SetBasePath(packageName string) {
 	ctx.washer = washer
 }
 
+// CreateFile creates a new, empty file
 func CreateFile(filename string, packageName string) *File {
 	f, err := ctx.washer.createFile(filename, packageName)
 	if err != nil {
@@ -51,10 +54,19 @@ func CreateFile(filename string, packageName string) *File {
 	return f
 }
 
+// FindFile finds a file by name / path
+func FindFile(filename string) *File {
+	f, err := ctx.washer.findFile(filename)
+	if err != nil {
+		fmt.Printf("[ERROR] Could not find file: %s\n", err)
+	}
+	return f
+}
+
 // NewWasher creates a new Washer
 func newWasher(basePath string) (*Washer, error) {
 	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, basePath, nil, parser.AllErrors)
+	pkgs, err := getAllPackages(fset, basePath)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +77,38 @@ func newWasher(basePath string) (*Washer, error) {
 	}, nil
 }
 
-// CreateFile creates a new go file
+func getAllPackages(fset *token.FileSet, basePath string) (map[string]*ast.Package, error) {
+	pkgs := make(map[string]*ast.Package)
+	files, err := ioutil.ReadDir(basePath)
+	if err != nil {
+		return nil, err
+	}
+	if err = getPackages(fset, basePath, pkgs); err != nil {
+		return nil, err
+	}
+
+	for _, f := range files {
+		if f.IsDir() {
+			if err = getPackages(fset, path.Join(basePath, f.Name()), pkgs); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return pkgs, nil
+}
+
+func getPackages(fset *token.FileSet, path string, pkgs map[string]*ast.Package) error {
+	p, err := parser.ParseDir(fset, path, nil, parser.AllErrors)
+	if err != nil {
+		return err
+	}
+	for k, v := range p {
+		pkgs[k] = v
+	}
+	return nil
+}
+
 func (washer *Washer) createFile(filename string, packageName string) (*File, error) {
 	targetFilename := path.Join(washer.BasePath, filename)
 	log.Printf("Creating file %s in package %s", targetFilename, packageName)
@@ -76,6 +119,30 @@ func (washer *Washer) createFile(filename string, packageName string) (*File, er
 		return nil, err
 	}
 	return washFile, nil
+}
+
+func (washer *Washer) findFile(filename string) (*File, error) {
+	targetFilename := path.Join(washer.BasePath, filename)
+	targetFilename = strings.Replace(targetFilename, "\\", "/", -1)
+	if _, err := os.Stat(targetFilename); err != nil {
+		return nil, err
+	}
+	dir, _ := path.Split(targetFilename)
+	dir = path.Clean(dir)
+	lastSlash := strings.LastIndex(dir, "/")
+	packageName := dir[lastSlash+1:]
+
+	for name, pkg := range ctx.washer.pkgs {
+		if name == packageName {
+			for k, f := range pkg.Files {
+				if strings.Replace(k, "\\", "/", -1) == targetFilename {
+					return newWashFile(targetFilename, f, washer), nil
+				}
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("Faild to find %s in the parsed sources", filename)
 }
 
 func newWashFile(targetFilename string, file *ast.File, washer *Washer) *File {
