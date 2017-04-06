@@ -23,7 +23,7 @@ func main() {
 
 	incant.NewFunction("validateCoin").
 		In("vending/vending.go").
-		WithTestIn(vendingTestFile).
+		WithTestInFile(vendingTestFile).
 		Given(invalidCoin).
 		ShouldReturn(zeroValue, notOk).
 		Build()

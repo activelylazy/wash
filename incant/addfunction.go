@@ -36,7 +36,7 @@ func (b *NewFunctionBuilder) In(name string) *NewFunctionBuilder {
 }
 
 // WithTestIn specifies the file to write the test to
-func (b *NewFunctionBuilder) WithTestIn(f *wash.File) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) WithTestInFile(f *wash.File) *NewFunctionBuilder {
 	b.testFile = f
 	return b
 }
