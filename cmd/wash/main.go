@@ -22,7 +22,7 @@ func main() {
 	notOk := okType.NewInstance("notOk", "false")
 
 	incant.NewFunction("validateCoin").
-		InFile("vending/vending.go").
+		In("vending/vending.go").
 		WithTestIn(vendingTestFile).
 		Given(invalidCoin).
 		ShouldReturn(zeroValue, notOk).

@@ -25,14 +25,14 @@ func NewFunction(name string) *NewFunctionBuilder {
 }
 
 // In specifies the file for the new function to be placed in
-func (b *NewFunctionBuilder) In(f *wash.File) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) InFile(f *wash.File) *NewFunctionBuilder {
 	b.file = f
 	return b
 }
 
 // InFile specifies the file for the new function to be placed in by name/path
-func (b *NewFunctionBuilder) InFile(name string) *NewFunctionBuilder {
-	return b.In(wash.FindFile(name))
+func (b *NewFunctionBuilder) In(name string) *NewFunctionBuilder {
+	return b.InFile(wash.FindFile(name))
 }
 
 // WithTestIn specifies the file to write the test to
