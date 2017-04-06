@@ -10,7 +10,7 @@ import (
 )
 
 // WriteFunctionCallTest appends a test to a file which verifies a call to a function
-func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues []domain.Concept, expectedValues []domain.Concept) error {
+func WriteFunctionCallTest(testFile File, calledFunction Function, givenValues []domain.Concept, expectedValues []domain.Concept) error {
 	testFile.AddImport("", "testing")
 
 	givenValueNames := getConceptNames(givenValues)

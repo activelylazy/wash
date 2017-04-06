@@ -12,8 +12,8 @@ import (
 
 // NewFunctionBuilder allows the fluent creation of a new function
 type NewFunctionBuilder struct {
-	file         *wash.File
-	testFile     *wash.File
+	file         wash.File
+	testFile     wash.File
 	name         string
 	returnValues []domain.Concept
 	arguments    []domain.Concept
@@ -28,7 +28,7 @@ func NewFunction(name string) *NewFunctionBuilder {
 }
 
 // InFile specifies the file for the new function to be placed in
-func (b *NewFunctionBuilder) InFile(f *wash.File) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) InFile(f wash.File) *NewFunctionBuilder {
 	b.file = f
 	return b
 }
@@ -44,7 +44,7 @@ func (b *NewFunctionBuilder) WithTestIn(name string) *NewFunctionBuilder {
 }
 
 // WithTestInFile specifies the file to write the test to
-func (b *NewFunctionBuilder) WithTestInFile(f *wash.File) *NewFunctionBuilder {
+func (b *NewFunctionBuilder) WithTestInFile(f wash.File) *NewFunctionBuilder {
 	b.testFile = f
 	return b
 }
@@ -78,7 +78,7 @@ func (b *NewFunctionBuilder) ShouldReturn(values ...domain.Concept) *NewFunction
 	return b
 }
 
-func (b *NewFunctionBuilder) deriveTestFile() (*wash.File, error) {
+func (b *NewFunctionBuilder) deriveTestFile() (wash.File, error) {
 	relPath, err := b.file.RelPath()
 	if err != nil {
 		return nil, err

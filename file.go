@@ -2,6 +2,7 @@ package wash
 
 import (
 	"go/ast"
+	"go/printer"
 	"go/token"
 	"log"
 	"path/filepath"
@@ -11,14 +12,21 @@ import (
 )
 
 // File represents a file managed by washer
-type File struct {
+type File interface {
+	AddImport(name string, path string)
+	AddFunction(functionName string, params []syntax.Field, returnValues []domain.Concept) Function
+	Write() error
+	RelPath() (string, error)
+}
+
+type washFile struct {
 	TargetFilename string
 	File           *ast.File
 	washer         *Washer
 }
 
 // AddImport adds a new import to this file
-func (f File) AddImport(name string, path string) {
+func (f washFile) AddImport(name string, path string) {
 	existing := existingImportSpecs(f.File)
 	for _, s := range existing {
 		if nilSafeToString(s.Name) == name && s.Path.Value == "\""+path+"\"" {
@@ -29,7 +37,7 @@ func (f File) AddImport(name string, path string) {
 }
 
 // AddFunction adds a new function to this file
-func (f File) AddFunction(functionName string, params []syntax.Field, returnValues []domain.Concept) Function {
+func (f washFile) AddFunction(functionName string, params []syntax.Field, returnValues []domain.Concept) Function {
 	log.Printf("Adding function %s to %s", functionName, f.TargetFilename)
 	statements := []ast.Stmt{}
 	if len(returnValues) > 0 {
@@ -48,7 +56,7 @@ func (f File) AddFunction(functionName string, params []syntax.Field, returnValu
 }
 
 // AddStruct adds a new struct to this file
-func (f File) AddStruct(file *File, structName string, fieldDeclarations []syntax.Field) Struct {
+func (f washFile) AddStruct(file *File, structName string, fieldDeclarations []syntax.Field) Struct {
 	log.Printf("Adding struct %s to %s", structName, f.TargetFilename)
 	decl := addStruct(f.File, structName, fieldDeclarations)
 	f.Write()
@@ -60,13 +68,24 @@ func (f File) AddStruct(file *File, structName string, fieldDeclarations []synta
 }
 
 // RelPath returns the path to this file, relative to the configured base path
-func (f File) RelPath() (string, error) {
+func (f washFile) RelPath() (string, error) {
 	dir, fname := filepath.Split(f.TargetFilename)
 	relPath, err := filepath.Rel(f.washer.BasePath, dir)
 	if err != nil {
 		return "", err
 	}
 	return filepath.Join(relPath, fname), nil
+}
+
+// Write writes the contents of a file
+func (f washFile) Write() error {
+	outfile, err := fs.Create(f.TargetFilename)
+	if err != nil {
+		return err
+	}
+	defer outfile.Close()
+	printer.Fprint(outfile, f.washer.Fset, f.File)
+	return nil
 }
 
 func addImport(f *ast.File, name string, path string) {

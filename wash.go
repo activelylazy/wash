@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/parser"
-	"go/printer"
 	"go/token"
 	"io/ioutil"
 	"log"
@@ -48,7 +47,7 @@ func SetBasePath(packageName string) {
 }
 
 // CreateFile creates a new, empty file
-func CreateFile(filename string, packageName string) *File {
+func CreateFile(filename string, packageName string) File {
 	f, err := ctx.washer.createFile(filename, packageName)
 	if err != nil {
 		fmt.Printf("[ERROR] Could not create file: %s\n", err)
@@ -58,7 +57,7 @@ func CreateFile(filename string, packageName string) *File {
 }
 
 // FindFile finds a file by name / path
-func FindFile(filename string) *File {
+func FindFile(filename string) File {
 	f, err := ctx.washer.findFile(filename)
 	if err != nil {
 		fmt.Printf("[ERROR] Could not find file: %s\n", err)
@@ -118,7 +117,7 @@ func getPackages(fset *token.FileSet, path string, pkgs map[string]*ast.Package)
 	return nil
 }
 
-func (washer *Washer) createFile(filename string, packageName string) (*File, error) {
+func (washer *Washer) createFile(filename string, packageName string) (File, error) {
 	targetFilename := path.Join(washer.BasePath, filename)
 	log.Printf("Creating file %s in package %s", targetFilename, packageName)
 	file := newFile(packageName)
@@ -131,7 +130,7 @@ func (washer *Washer) createFile(filename string, packageName string) (*File, er
 	return washFile, nil
 }
 
-func (washer *Washer) findFile(filename string) (*File, error) {
+func (washer *Washer) findFile(filename string) (File, error) {
 	targetFilename := path.Join(washer.BasePath, filename)
 	targetFilename = strings.Replace(targetFilename, "\\", "/", -1)
 	if _, err := fs.Stat(targetFilename); err != nil {
@@ -155,8 +154,8 @@ func (washer *Washer) findFile(filename string) (*File, error) {
 	return nil, fmt.Errorf("Faild to find %s in the parsed sources", filename)
 }
 
-func newWashFile(targetFilename string, file *ast.File, washer *Washer) *File {
-	return &File{
+func newWashFile(targetFilename string, file *ast.File, washer *Washer) File {
+	return &washFile{
 		TargetFilename: targetFilename,
 		File:           file,
 		washer:         washer,
@@ -167,14 +166,4 @@ func newFile(packageName string) *ast.File {
 	f := &ast.File{}
 	f.Name = ast.NewIdent(packageName)
 	return f
-}
-
-func (w *File) Write() error {
-	outfile, err := fs.Create(w.TargetFilename)
-	if err != nil {
-		return err
-	}
-	defer outfile.Close()
-	printer.Fprint(outfile, w.washer.Fset, w.File)
-	return nil
 }
