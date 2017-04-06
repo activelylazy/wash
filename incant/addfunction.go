@@ -24,18 +24,23 @@ func NewFunction(name string) *NewFunctionBuilder {
 	}
 }
 
-// In specifies the file for the new function to be placed in
+// InFile specifies the file for the new function to be placed in
 func (b *NewFunctionBuilder) InFile(f *wash.File) *NewFunctionBuilder {
 	b.file = f
 	return b
 }
 
-// InFile specifies the file for the new function to be placed in by name/path
+// In specifies the file for the new function to be placed in by name/path
 func (b *NewFunctionBuilder) In(name string) *NewFunctionBuilder {
 	return b.InFile(wash.FindFile(name))
 }
 
-// WithTestIn specifies the file to write the test to
+// WithTestIn specifies the file to write the test to by name/path
+func (b *NewFunctionBuilder) WithTestIn(name string) *NewFunctionBuilder {
+	return b.WithTestInFile(wash.FindFile(name))
+}
+
+// WithTestInFile specifies the file to write the test to
 func (b *NewFunctionBuilder) WithTestInFile(f *wash.File) *NewFunctionBuilder {
 	b.testFile = f
 	return b
