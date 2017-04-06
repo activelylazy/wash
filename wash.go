@@ -12,9 +12,12 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/spf13/afero"
 )
 
 var ctx = context{}
+var fs = afero.NewOsFs()
 
 type context struct {
 	washer *Washer
@@ -33,7 +36,7 @@ func SetBasePath(packageName string) {
 	var gorootSrc = filepath.Join(filepath.Clean(gopath), "src")
 	var basePath = filepath.Join(gorootSrc, packageName)
 
-	if _, err := os.Stat(basePath); err != nil {
+	if _, err := fs.Stat(basePath); err != nil {
 		fmt.Printf("[ERROR] Could not find package path %s\n", basePath)
 	}
 
@@ -119,7 +122,7 @@ func (washer *Washer) createFile(filename string, packageName string) (*File, er
 	targetFilename := path.Join(washer.BasePath, filename)
 	log.Printf("Creating file %s in package %s", targetFilename, packageName)
 	file := newFile(packageName)
-	os.MkdirAll(path.Dir(targetFilename), 0700)
+	fs.MkdirAll(path.Dir(targetFilename), 0700)
 	washFile := newWashFile(targetFilename, file, washer)
 	if err := washFile.Write(); err != nil {
 		return nil, err
@@ -131,7 +134,7 @@ func (washer *Washer) createFile(filename string, packageName string) (*File, er
 func (washer *Washer) findFile(filename string) (*File, error) {
 	targetFilename := path.Join(washer.BasePath, filename)
 	targetFilename = strings.Replace(targetFilename, "\\", "/", -1)
-	if _, err := os.Stat(targetFilename); err != nil {
+	if _, err := fs.Stat(targetFilename); err != nil {
 		return nil, err
 	}
 	dir, _ := path.Split(targetFilename)
@@ -167,7 +170,7 @@ func newFile(packageName string) *ast.File {
 }
 
 func (w *File) Write() error {
-	outfile, err := os.Create(w.TargetFilename)
+	outfile, err := fs.Create(w.TargetFilename)
 	if err != nil {
 		return err
 	}
