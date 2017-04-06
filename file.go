@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 	"log"
+	"path/filepath"
 
 	"github.com/activelylazy/wash/domain"
 	"github.com/activelylazy/wash/syntax"
@@ -56,6 +57,16 @@ func (f File) AddStruct(file *File, structName string, fieldDeclarations []synta
 		structName: structName,
 		Decl:       decl,
 	}
+}
+
+// RelPath returns the path to this file, relative to the configured base path
+func (f File) RelPath() (string, error) {
+	dir, fname := filepath.Split(f.TargetFilename)
+	relPath, err := filepath.Rel(f.washer.BasePath, dir)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(relPath, fname), nil
 }
 
 func addImport(f *ast.File, name string, path string) {

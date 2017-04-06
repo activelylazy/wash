@@ -2,6 +2,9 @@ package incant
 
 import (
 	"log"
+	"path"
+
+	"strings"
 
 	"github.com/activelylazy/wash"
 	"github.com/activelylazy/wash/domain"
@@ -48,6 +51,14 @@ func (b *NewFunctionBuilder) WithTestInFile(f *wash.File) *NewFunctionBuilder {
 
 // Build builds the new function
 func (b *NewFunctionBuilder) Build() {
+	if b.testFile == nil {
+		f, err := b.deriveTestFile()
+		if err != nil {
+			log.Fatalf("Error: %v", err)
+			return
+		}
+		b.testFile = f
+	}
 	fn := b.file.AddFunction(b.name, domain.ConceptsToFields(b.arguments), b.returnValues)
 
 	if err := wash.WriteFunctionCallTest(b.testFile, fn, b.arguments, b.returnValues); err != nil {
@@ -65,4 +76,16 @@ func (b *NewFunctionBuilder) Given(arguments ...domain.Concept) *NewFunctionBuil
 func (b *NewFunctionBuilder) ShouldReturn(values ...domain.Concept) *NewFunctionBuilder {
 	b.returnValues = values
 	return b
+}
+
+func (b *NewFunctionBuilder) deriveTestFile() (*wash.File, error) {
+	relPath, err := b.file.RelPath()
+	if err != nil {
+		return nil, err
+	}
+	dir, name := path.Split(relPath)
+	p := strings.LastIndex(name, ".")
+	filename := name[:p]
+	ext := name[p+1:]
+	return wash.FindFile(path.Join(dir, filename+"_test."+ext)), nil
 }
