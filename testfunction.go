@@ -29,7 +29,10 @@ func WriteFunctionCallTest(testFile *File, calledFunction Function, givenValues 
 		return errors.New("Number of given values is not the same as number of arguments function expects")
 	}
 
-	fn.Append(strings.Join(returnValueNames, ", ") + ` := ` + calledFunction.FunctionName + "(" + strings.Join(arguments, ", ") + ")")
+	fn.Append(fmt.Sprintf(`%s := %s(%s)`,
+		strings.Join(returnValueNames, ", "),
+		calledFunction.FunctionName,
+		strings.Join(arguments, ", ")))
 
 	for i, varName := range returnValueNames {
 		fn.Append(fmt.Sprintf(`if %v {
